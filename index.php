@@ -15,9 +15,9 @@ $bodyPath = "/apps/sage-tables";
 $title = "Sage 100 Tables";
 $description = "";
 
-$ui = new WebUI($bodyPath, $title, $description, true, true);
+$ui = new WebUI($bodyPath, $title, $description, true, 5);
 $ui->version = "2019-05-29";
 $ui->bodyClassName = 'container-fluid';
-$ui->AddCSS("public/styles.css");
+$ui->AddCSS("public/styles.css", false, true);
 $ui->addManifest('public/js/manifest.json');
 $ui->Send();

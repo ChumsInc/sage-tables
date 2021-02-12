@@ -3,11 +3,16 @@ import {
     ADD_TAB,
     CLOSE_TAB,
     DISMISS_ALERT,
-    FETCH_FAILURE, FETCH_INIT,
-    FETCH_QUERY, FETCH_SUCCESS, FETCH_TABLE,
+    FETCH_FAILURE,
+    FETCH_INIT,
+    FETCH_QUERY,
+    FETCH_SUCCESS,
+    FETCH_TABLE,
     FETCH_TABLES,
-    SET_ALERT, SET_COMPANY, SET_LIMIT,
-    SET_QUERY, SET_SERVER, SET_TAB, SET_TAB_NAME, SET_TABLES_SERVER
+    SET_ALERT,
+    SET_QUERY,
+    SET_TAB,
+    SET_TAB_NAME
 } from "./constants";
 import {now} from './utils';
 
@@ -166,7 +171,7 @@ const tableDetails = (state = {}, action) => {
     case FETCH_TABLE:
         if (status === FETCH_SUCCESS) {
             return {
-            ...state,
+                ...state,
                 [tab]: {...state[tab], ...props},
             }
         }
@@ -187,7 +192,6 @@ const tableDetails = (state = {}, action) => {
         return state;
     }
 };
-
 
 
 export default combineReducers({

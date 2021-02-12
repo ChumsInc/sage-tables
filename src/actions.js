@@ -1,18 +1,25 @@
 import {
     API_QUERY,
     API_TABLE,
-    API_TABLES, CLOSE_TAB, COMPANIES,
-    DISMISS_ALERT, FETCH_FAILURE, FETCH_INIT, FETCH_QUERY, FETCH_SUCCESS, FETCH_TABLE, FETCH_TABLES, SERVERS,
+    API_TABLES,
+    CLOSE_TAB,
+    COMPANIES,
+    DISMISS_ALERT,
+    FETCH_FAILURE,
+    FETCH_INIT,
+    FETCH_QUERY,
+    FETCH_SUCCESS,
+    FETCH_TABLE,
+    FETCH_TABLES,
+    SERVERS,
     SET_ALERT,
-    SET_COMPANY,
-    SET_LIMIT,
     SET_QUERY,
-    SET_SERVER,
-    SET_TAB, SET_TAB_NAME,
-    SET_TABLES_SERVER
+    SET_TAB,
+    SET_TAB_NAME
 } from "./constants";
 import {buildPath, fetchGET, fetchPOST} from "./fetch";
 import {now} from './utils';
+
 const nonce = document.getElementById('app').dataset.nonce;
 
 export const setAlert = ({type = 'warning', title = 'Oops!', message = 'There was an error'}) => ({
@@ -23,12 +30,17 @@ export const setAlert = ({type = 'warning', title = 'Oops!', message = 'There wa
 export const dismissAlert = (id) => ({type: DISMISS_ALERT, id});
 
 
-
 export const setTab = (tab) => ({type: SET_TAB, tab});
 export const setQuery = (tab, props) => ({type: SET_QUERY, tab, props});
 export const setTabName = ({tab, name}) => ({type: SET_TAB_NAME, tab, name});
 
-export const addNewTab = ({query = '', company = COMPANIES[0], server = SERVERS[0], limit = 100, offset = 0} = {}) => (dispatch, getState) => {
+export const addNewTab = ({
+                              query = '',
+                              company = COMPANIES[0],
+                              server = SERVERS[0],
+                              limit = 100,
+                              offset = 0
+                          } = {}) => (dispatch, getState) => {
     const tab = now().toString(36);
     dispatch({type: SET_TAB, tab});
     dispatch({type: SET_QUERY, tab, props: {query, server, company, limit, offset}});
@@ -75,7 +87,12 @@ export const fetchTable = (server, table) => (dispatch, getState) => {
     dispatch({type: FETCH_TABLE, tab, status: FETCH_INIT, props: {server, table}});
     fetchGET(url)
         .then(({columns, primary_keys, indexes}) => {
-            dispatch({type: FETCH_TABLE, tab, status: FETCH_SUCCESS, props: {server, table, columns, primary_keys, indexes}});
+            dispatch({
+                type: FETCH_TABLE,
+                tab,
+                status: FETCH_SUCCESS,
+                props: {server, table, columns, primary_keys, indexes}
+            });
         })
         .catch(err => {
             dispatch({type: FETCH_TABLE, status: FETCH_FAILURE, tab});
@@ -99,7 +116,16 @@ export const fetchQuery = (tab) => (dispatch, getState) => {
         .then(({Fields, Data, timings, Error: queryError}) => {
             const rows = Data.length;
             Data.forEach((row, index) => row.__index = index);
-            dispatch({type: FETCH_QUERY, status: FETCH_SUCCESS, tab, columns: Fields, data: Data, rows, timings, error: queryError});
+            dispatch({
+                type: FETCH_QUERY,
+                status: FETCH_SUCCESS,
+                tab,
+                columns: Fields,
+                data: Data,
+                rows,
+                timings,
+                error: queryError
+            });
         })
         .catch(err => {
             console.log(err.message);

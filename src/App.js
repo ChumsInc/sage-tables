@@ -5,16 +5,21 @@ import TabList from "./components/TabList";
 import TabContent from "./components/TabContent";
 import ErrorBoundary from "./common-components/ErrorBoundary";
 
+
+/**
+ * @TODO: Add "Save Query" functionality.
+ */
+
 export default class App extends Component {
     static propTypes = {
 
     }
 
     componentDidMount() {
-        // window.addEventListener('beforeunload', (ev) => {
-        //     ev.preventDefault();
-        //     ev.returnValue = '';
-        // })
+        window.addEventListener('beforeunload', (ev) => {
+            ev.preventDefault();
+            ev.returnValue = '';
+        })
     }
 
     render() {

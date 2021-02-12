@@ -19,7 +19,7 @@ const Tab = ({active = false, id, title, onSelect, onClose}) => {
         <li className="nav-item">
             <a className={classNames('nav-link', {active})} href="#" onClick={onClick}>
                 {title || id}
-                <button type="button" className="btn-close ms-1" aria-label="Close" onClick={onClickClose}></button>
+                <button type="button" className="btn-close ms-1" aria-label="Close" onClick={onClickClose} />
             </a>
         </li>
     );

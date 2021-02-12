@@ -20,7 +20,7 @@
   padding-right: 1rem;
 }
 
-.form-inline {
+.row.form-inline {
   align-items: flex-end;
 }
 

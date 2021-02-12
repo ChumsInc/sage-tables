@@ -1,9 +1,7 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import FormGroup from "./FormGroup";
 import TextInput from "./TextInput";
-
 
 
 export default class FormGroupTextInput extends PureComponent {
@@ -44,12 +42,14 @@ export default class FormGroupTextInput extends PureComponent {
     }
 
     render() {
-        const {onChange, colWidth, value, className, id, labelClassName, formGroupClassName, label, field, placeholder,
-            children, inline, readOnly, helpText, ...rest} = this.props;
+        const {
+            onChange, colWidth, value, className, id, labelClassName, formGroupClassName, label, field, placeholder,
+            children, inline, readOnly, helpText, ...rest
+        } = this.props;
         return (
             <FormGroup colWidth={colWidth} inline={inline}
                        className={formGroupClassName} htmlFor={id}
-                       labelClassName={labelClassName} label={label} helpText={helpText} >
+                       labelClassName={labelClassName} label={label} helpText={helpText}>
                 <TextInput id={id} className={className}
                            value={value} field={field}
                            onChange={this.onChange}

@@ -61,8 +61,8 @@ export default class Pagination extends Component {
         className: ''
     };
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.onSelect = this.onSelect.bind(this);
     }
 

@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
+import React from 'react';
 import Select from "./Select";
 import FormGroup from "./FormGroup";
 
 const RowsPerPage = ({value = 25, onChange}) => {
     return (
-        <FormGroup label="Rows per Page" className="mr-3" >
+        <FormGroup label="Rows per Page" className="mr-3">
             <Select value={value} field="rowsPerPage" onChange={({value}) => onChange(Number(value))}>
                 <option value={10}>10</option>
                 <option value={25}>25</option>

@@ -1,4 +1,4 @@
-import React, {PureComponent, Fragment} from 'react';
+import React, {Fragment} from 'react';
 import classNames from 'classnames';
 
 
@@ -9,6 +9,7 @@ const TextInput = React.forwardRef((props, ref) => {
         'form-control-sm': !className.split(' ').includes('form-control-lg'),
         className
     };
+
     const changeValue = (ev) => {
         switch (props.type) {
         case 'number':
