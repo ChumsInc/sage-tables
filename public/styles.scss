@@ -1,0 +1,55 @@
+.table-column-list,
+.table-results,
+.sage-table-list {
+  font-size: small;
+  thead {
+    th {
+      white-space: nowrap;
+    }
+  }
+  tbody {
+    td {
+      white-space: nowrap;
+      font-family: "Roboto Mono", monospace;
+      .zoom-table {
+        padding-right: 1rem;
+      }
+    }
+  }
+}
+
+.form-inline {
+  align-items: flex-end;
+}
+
+.query-results-container {
+  //overflow: auto;
+}
+.CodeMirror {
+  border: 1px solid #eee;
+  height: auto !important;
+  .CodeMirror-scroll {
+    max-height: 33vh;
+  }
+}
+
+.null-content {
+  font-family: monospace;
+  color: #a3a3a3;
+  padding: 0.25rem;
+}
+
+.query-results {
+  overflow-x: auto;
+
+}
+
+.table-responsive {
+  max-height: 90vh;
+  .table-sticky {
+    thead tr:nth-child(1) th {
+      top: 0;
+    }
+  }
+
+}
