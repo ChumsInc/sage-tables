@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import ProgressBar from "../common-components/ProgressBar";
 import SortableTable from "../common-components/SortableTable";
-
+import {saveAs} from 'file-saver';
 
 const QueryDuration = ({duration}) => {
     const unit = 'ms';
@@ -39,6 +39,26 @@ class QueryResult extends Component {
         selected: null,
     };
 
+    constructor(props) {
+        super(props);
+        this.onDownloadTSV = this.onDownloadTSV.bind(this);
+        this.onDownloadJSON = this.onDownloadJSON.bind(this);
+    }
+
+    onDownloadTSV() {
+        const {data} = this.props;
+        const values = data.map(row => Object.values(row).join('\t')).join('\r\n');
+        const file = new Blob([values]);
+        saveAs(file, 'data.txt');
+    }
+
+    onDownloadJSON() {
+        const {data} = this.props;
+        const values = JSON.stringify(data, ' ', 2);
+        const file = new Blob([values]);
+        saveAs(file, 'data.json');
+    }
+
     render() {
         const {rows, columns, data, dirty, loading, timings} = this.props;
         const {page, rowsPerPage, selected} = this.state;
@@ -46,13 +66,20 @@ class QueryResult extends Component {
         return (
             <div className="query-results-container">
                 <ProgressBar striped={true} style={{height: '5px'}} value={loading ? 100 : 0}/>
-                <code>
-                    <span>{JSON.stringify({rows, dirty})}</span>
-                    <span className="ml-3">
-                        Duration: <QueryDuration duration={timings.duration} />
+                <div>
+                    <code>
+                        <span>{JSON.stringify({rows, dirty})}</span>
+                    </code>
+                    <span className="ms-3">
+                        Duration: <QueryDuration duration={timings.duration}/>
                     </span>
-
-                </code>
+                    <button type="button" className="btn btn-sm btn-outline-secondary ms-3" disabled={data.length === 0}
+                            onClick={this.onDownloadTSV}>Download TSV
+                    </button>
+                    <button type="button" className="btn btn-sm btn-outline-secondary ms-3" disabled={data.length === 0}
+                            onClick={this.onDownloadJSON}>Download JSON
+                    </button>
+                </div>
                 <SortableTable fields={fields} data={data} className="table-results" responsive={true}
                                keyField="__index"
                                selected={selected}
