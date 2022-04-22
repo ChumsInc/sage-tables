@@ -1,16 +1,21 @@
 const path = require('path');
-const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 
-require('dotenv').config();
+
+// require('dotenv').config();
 
 module.exports = {
-    entry: './src/index.js',
+    entry: './src/index.tsx',
     module: {
         rules: [
             {
+                test: /\.tsx?$/,
+                use: ['ts-loader'],
+                exclude: /node_modules/,
+            },
+            {
                 test: /\.js$/,
-                exclude: path.resolve(__dirname, 'node_modules'),
-                use: ['babel-loader']
+                use: ['babel-loader'],
+                exclude: /node_modules/,
             },
             {
                 test: /\.css$/,
@@ -29,9 +34,10 @@ module.exports = {
             }
         ]
     },
-    plugins: [
-        new BundleAnalyzerPlugin(),
-    ],
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js'],
+    },
+    plugins: [],
     optimization: {
         splitChunks: {
             cacheGroups: {
@@ -41,7 +47,7 @@ module.exports = {
                     chunks: 'all',
                 },
                 chums: {
-                    test: /[\\/]common-components[\\/]/,
+                    test: /[\\/](common|chums)-components[\\/]/,
                     name: 'chums',
                     chunks: 'all',
                 },

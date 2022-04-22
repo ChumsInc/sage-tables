@@ -6,13 +6,13 @@ import FormGroup from "../common-components/FormGroup";
 import Select from "../common-components/Select";
 import {fetchQuery, setQuery} from '../actions';
 import FormGroupTextInput from "../common-components/FormGroupTextInput";
-import {Controlled as CodeMirror} from "react-codemirror2";
+// import {Controlled as CodeMirror} from "react-codemirror";
 
 
-require('codemirror/lib/codemirror.css');
-require('codemirror/theme/material.css');
-require('codemirror/theme/neat.css');
-require('codemirror/mode/sql/sql');
+// require('codemirror/lib/codemirror.css');
+// require('codemirror/theme/material.css');
+// require('codemirror/theme/neat.css');
+// require('codemirror/mode/sql/sql');
 
 class QueryEditor extends Component {
     static propTypes = {
@@ -97,8 +97,8 @@ class QueryEditor extends Component {
                         </FormGroup>
                     </div>
                     <div>
-                        <CodeMirror value={query} onBeforeChange={this.handleQueryChange} onKeyPress={this.onKeyDown}
-                                    options={{lineNumbers: true, lineWrapping: true, viewportMargin: Infinity}}/>
+                        {/*<CodeMirror value={query} onBeforeChange={this.handleQueryChange} onKeyPress={this.onKeyDown}*/}
+                        {/*            options={{lineNumbers: true, lineWrapping: true, viewportMargin: Infinity}}/>*/}
                     </div>
                 </form>
             </div>

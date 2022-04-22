@@ -1,4 +1,5 @@
 import {combineReducers} from 'redux';
+import {alertReducer} from 'chums-ducks';
 import {
     ADD_TAB,
     CLOSE_TAB,
@@ -195,7 +196,8 @@ const tableDetails = (state = {}, action) => {
 
 
 export default combineReducers({
-    alerts,
+    alerts: alertReducer,
+    // alerts,
     tab,
     tabs,
     tabNames,

@@ -5,7 +5,8 @@ import TableDetail from "./TableDetail";
 import QueryContent from "./QueryEditor";
 import {addNewTab} from '../actions';
 import QueryResult from "./QueryResult";
-import AlertList from "../common-components/AlertList";
+// import AlertList from "../common-components/AlertList";
+import {AlertList} from 'chums-ducks';
 import ErrorBoundary from "../common-components/ErrorBoundary";
 
 class TabContent extends Component {

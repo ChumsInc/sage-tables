@@ -17,6 +17,7 @@ import {
     SET_TAB,
     SET_TAB_NAME
 } from "./constants";
+import {onErrorAction} from 'chums-ducks';
 import {buildPath, fetchGET, fetchPOST} from "./fetch";
 import {now} from './utils';
 
@@ -77,6 +78,7 @@ export const fetchTables = (server) => (dispatch, getState) => {
             dispatch({type: FETCH_TABLES, status: FETCH_SUCCESS, server, list})
         })
         .catch(err => {
+            dispatch(onErrorAction(err, FETCH_TABLES));
             dispatch({type: FETCH_TABLES, status: FETCH_FAILURE, err});
         });
 };
