@@ -1,24 +1,19 @@
 import React, {ChangeEvent, useEffect} from 'react';
-import {useDispatch, useSelector} from "react-redux";
-import {
-    filterChangedAction,
-    loadTablesAction, selectCompany,
-    selectFilter,
-    selectLoading,
-    selectServer,
-    serverChangedAction
-} from "./index";
-import {SpinnerButton} from "chums-ducks";
+import {useSelector} from "react-redux";
+
+import {SpinnerButton} from "chums-components";
+import {useAppDispatch} from "../../app/configureStore";
+import {loadTables, selectCompany, selectFilter, selectLoading, selectServer} from "./index";
 
 const TablesFilter:React.FC = () => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const server = useSelector(selectServer);
     const company = useSelector(selectCompany);
     const filter = useSelector(selectFilter);
     const loading = useSelector(selectLoading);
 
     useEffect(() => {
-        dispatch(loadTablesAction());
+        dispatch(loadTables(company));
     }, [])
 
     const handleServerChange = (ev:ChangeEvent<HTMLSelectElement>) => {

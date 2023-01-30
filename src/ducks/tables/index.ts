@@ -1,162 +1,110 @@
-import {combineReducers} from "redux";
-import {
-    ActionInterface,
-    ActionPayload, fetchJSON,
-    filterPage,
-    selectCurrentPage,
-    selectRowsPerPage,
-    selectTableSort
-} from "chums-ducks";
-import {ThunkAction} from "redux-thunk";
-import {RootState} from "../index";
-import {createSelector} from "reselect";
-import {API_TABLES} from "../../constants";
+import {ActionStatus, ServerName, TableResponse} from "../types";
+import {createAction, createAsyncThunk, createReducer} from "@reduxjs/toolkit";
+import {fetchTable, fetchTables} from "../../api/tables";
+import {RootState} from "../../app/configureStore";
 
-export const tableId = 'server-tables';
+export const tableId = 'server-list';
 
-export interface TablesPayload extends ActionPayload {
-    tables?: string[],
-    value?: string,
+export interface TablesState {
+    server: ServerName;
+    company: string;
+    list: string[];
+    filter: string;
+    tableDetail: {
+        [key: string]: TableResponse;
+    };
+    status: ActionStatus;
+    page: number,
+    rowsPerPage: number;
 }
 
-export interface TablesAction extends ActionInterface {
-    payload?: TablesPayload,
+export const initialTablesState: TablesState = {
+    server: 'ARCHES',
+    company: 'CHI',
+    list: [],
+    filter: '',
+    tableDetail: {},
+    status: 'idle',
+    page: 0,
+    rowsPerPage: 25,
 }
 
-export interface TablesThunkAction extends ThunkAction<any, RootState, unknown, TablesAction> {
-}
-
-export const tablesServerChanged = 'tables/serverChanged';
-export const tablesFilterChanged = 'tables/filterChanged';
-export const tablesCompanyChanged = 'tables/companyChanged';
-
-export const tablesLoadListRequested = 'tables/loadListRequested';
-export const tablesLoadListSucceeded = 'tables/loadListSucceeded';
-export const tablesLoadListFailed = 'tables/loadListFailed';
-
-
-
-export const selectServer = (state: RootState) => state.tables.server;
+export const selectServer = (state:RootState) => state.tables.server;
 export const selectCompany = (state:RootState) => state.tables.company;
-export const selectLoading = (state: RootState) => state.tables.loading;
-export const selectFilter = (state: RootState) => state.tables.filter;
-export const selectTablesList = (state: RootState) => state.tables.list;
-export const selectTablesLength = createSelector(
-    [selectTablesList, selectFilter],
-    (list, filter) => {
-        let re: RegExp = /^/;
-        try {
-            re = new RegExp(filter);
-        } catch (err: unknown) {
-            re = /^/;
-        }
-        return list.filter(table => re.test(table)).length
+export const selectFilter = (state:RootState) => state.tables.filter;
+export const selectTables = (state:RootState) => state.tables.list;
+export const selectTable = (state:RootState, table: string) => state.tables.tableDetail[table] ?? null;
+export const selectLoading = (state:RootState) => state.tables.status === 'pending';
+export const selectRowsPerPage = (state:RootState) => state.tables.rowsPerPage;
+export const selectPage = (state:RootState) => state.tables.page;
+
+
+export const setServer = createAction<ServerName>('list/setServer');
+export const setCompany = createAction<string>('list/setCompany');
+
+export const setFilter = createAction<string>('list/setFilter');
+
+export const loadTables = createAsyncThunk<string[], ServerName>(
+    'list/loadList',
+    async (arg) => {
+        return await fetchTables(arg);
+    },
+)
+
+export const loadTable = createAsyncThunk<TableResponse, string>(
+    'list/loadTable',
+    async (arg) => {
+        return await fetchTable('CHI', arg);
     }
 )
 
-export const selectFilteredTablesList = createSelector(
-    [selectTablesList, selectFilter, selectCurrentPage(tableId), selectRowsPerPage(tableId)],
-    (list, filter, page, rowsPerPage) => {
-        let re: RegExp = /^/;
-        try {
-            re = new RegExp(filter);
-        } catch (err: unknown) {
-            re = /^/;
-        }
-        return list
-            .filter(table => re.test(table))
-            .filter(filterPage(page, rowsPerPage));
-    })
+export const setRowsPerPage = createAction<number>('list/setRowsPerPage');
+
+export const setPage = createAction<number>('list/setPage');
 
 
-export const serverChangedAction = (value:string) => ({type: tablesServerChanged, payload: {value}});
-export const companyChangedAction = (value:string) => ({type: tablesCompanyChanged, payload: {value}});
-export const filterChangedAction = (value:string) => ({type: tablesFilterChanged, payload: {value}});
-export const loadTablesAction = (): TablesThunkAction =>
-    async (dispatch, getState) => {
-        try {
-            const state = getState();
-            if (selectLoading(state)) {
-                return;
+const tablesReducer = createReducer(initialTablesState, (builder) => {
+    builder
+        .addCase(setServer, (state, action) => {
+            state.server = action.payload;
+        })
+        .addCase(setCompany, (state, action) => {
+            state.company = action.payload;
+        })
+        .addCase(setFilter, (state, action) => {
+            state.filter = action.payload;
+        })
+        .addCase(loadTables.pending, (state, action) => {
+            state.server = action.meta.arg;
+            state.status = 'pending';
+        })
+        .addCase(loadTables.fulfilled, (state, action) => {
+            state.status = "fulfilled";
+            state.list = action.payload;
+            Object.keys(state.tableDetail).forEach(table => {
+                if (!state.list.includes(table)) {
+                    delete state.tableDetail[table];
+                }
+            })
+        })
+        .addCase(loadTables.rejected, (state) => {
+            state.status = 'rejected';
+        })
+        .addCase(loadTable.pending, (state, action) => {
+            if (!state.tableDetail[(action.meta.arg)]) {
+                state.tableDetail[(action.meta.arg)] = {columns: [], indexes: {}, raw: [], primary_keys: []}
             }
-            const server = selectServer(state);
-            dispatch({type: tablesLoadListRequested});
-
-            const url = API_TABLES.replace(':server', encodeURIComponent(server));
-            const {tables} = await fetchJSON<{ tables: string[] }>(url);
-            dispatch({type: tablesLoadListSucceeded, payload: {tables}});
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                console.log("loadTablesAction()", error.message);
-                return dispatch({type: tablesLoadListFailed, payload: {error, context: tablesLoadListRequested}})
+            state.tableDetail[(action.meta.arg)].loading = true;
+        })
+        .addCase(loadTable.fulfilled, (state, action) => {
+            state.tableDetail[(action.meta.arg)] = action.payload;
+        })
+        .addCase(loadTable.rejected, (state, action) => {
+            if (!state.tableDetail[(action.meta.arg)]) {
+                state.tableDetail[(action.meta.arg)] = {columns: [], indexes: {}, raw: [], primary_keys: []}
             }
-            console.error("loadTablesAction()", error);
-        }
-    }
-
-
-const serverReducer = (state: string = 'arches', action: TablesAction): string => {
-    const {type, payload} = action;
-    switch (type) {
-    case tablesServerChanged:
-        return payload?.value || 'arches';
-    default:
-        return state;
-    }
-}
-
-const companyReducer = (state:string = 'CHI', action: TablesAction):string => {
-    const {type, payload} = action;
-    switch (type) {
-    case tablesCompanyChanged:
-        return payload?.value || 'CHI';
-    default:
-        return state;
-    }
-}
-
-const listReducer = (state: string[] = [], action: TablesAction): string[] => {
-    const {type, payload} = action;
-    switch (type) {
-    case tablesLoadListSucceeded:
-        if (payload?.tables) {
-            return payload.tables.sort();
-        }
-        return [];
-    case tablesServerChanged:
-    case tablesCompanyChanged:
-        return [];
-    default:
-        return state;
-    }
-}
-
-const loadingReducer = (state: boolean = false, action: TablesAction): boolean => {
-    switch (action.type) {
-    case tablesLoadListRequested:
-        return true;
-    case tablesLoadListFailed:
-    case tablesLoadListSucceeded:
-        return false;
-    default:
-        return state;
-    }
-}
-
-const filterReducer = (state: string = '', action: TablesAction): string => {
-    const {type, payload} = action;
-    switch (type) {
-    case tablesFilterChanged:
-        return payload?.value || '';
-    default:
-        return state;
-    }
-}
-
-export default combineReducers({
-    server: serverReducer,
-    company: companyReducer,
-    list: listReducer,
-    loading: loadingReducer,
-    filter: filterReducer,
+            state.tableDetail[(action.meta.arg)].loading = false;
+        })
 })
+
+export default tablesReducer;

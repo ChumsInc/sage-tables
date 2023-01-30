@@ -21,8 +21,8 @@ export const FETCH_TABLES = 'FETCH_TABLES';
 export const FETCH_TABLE = 'FETCH_TABLE';
 export const FETCH_QUERY = 'FETCH_QUERY';
 
-export const API_TABLES = '/:server/api/sage-tables.php';
-export const API_TABLE = '/:server/api/sage-tables.php\\?table=:table';
+export const API_TABLES = '/:server/api/sage-list.php';
+export const API_TABLE = '/:server/api/sage-list.php\\?table=:table';
 export const API_QUERY = '/node-sage/api/:company/query/:limit(\\d+)?/:offset(\\d+)?';
 
 export const COMPANIES = ['CHI', 'TST', 'BCS', 'BCT'];

@@ -1,16 +1,16 @@
 import React from 'react';
-import {render} from 'react-dom';
+import {createRoot} from 'react-dom/client';
 import {Provider} from 'react-redux';
-import {applyMiddleware, compose, createStore} from 'redux';
-import thunk from 'redux-thunk';
-import reducer from './ducks';
-import App from './App';
-import {composeWithDevTools} from 'redux-devtools-extension'
+import App from './app/App';
+import store from './app/configureStore'
 
-const store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)));
-
-render(
-    <Provider store={store}>
-        <App/>
-    </Provider>, document.getElementById('app')
+window.localStorage.setItem('debug', '*');
+const container = document.getElementById('app');
+const root = createRoot(container!);
+root.render(
+    <React.StrictMode>
+        <Provider store={store}>
+            <App/>
+        </Provider>
+    </React.StrictMode>
 );
