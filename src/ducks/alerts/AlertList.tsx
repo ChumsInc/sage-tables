@@ -1,8 +1,8 @@
 import React from 'react';
-import {useAppDispatch} from "../../app/hooks";
 import {useSelector} from "react-redux";
 import {dismissAlert, selectAlerts} from "./index";
 import {Alert} from "chums-components";
+import {useAppDispatch} from "../../app/configureStore";
 
 const AlertList = () => {
     const dispatch = useAppDispatch();

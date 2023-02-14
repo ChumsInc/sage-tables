@@ -11,7 +11,7 @@
 require_once ("autoload.inc.php");
 require_once ('access.inc.php');
 
-$bodyPath = "/apps/sage-list";
+$bodyPath = "/apps/sage-tables";
 $title = "Sage 100 Tables";
 $description = "";
 

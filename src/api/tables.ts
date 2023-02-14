@@ -1,7 +1,7 @@
 import {fetchJSON} from "chums-components";
-import {QueryResponse, TableResponse} from "../ducks/types";
+import {CompanyCode, CompanyServer, QueryResponse, ServerName, TableResponse} from "../types";
 
-export async function fetchTables(company:string):Promise<string[]> {
+export async function fetchTables(arg:CompanyServer):Promise<string[]> {
     try {
         const url = `/arches/api/sage-tables.php`;
         const {tables} = await fetchJSON<{tables: string[] }>(url, {credentials: 'same-origin'});
@@ -16,7 +16,7 @@ export async function fetchTables(company:string):Promise<string[]> {
     }
 }
 
-export async function fetchTable(company:string, table:string):Promise<TableResponse> {
+export async function fetchTable(company:CompanyServer, table:string):Promise<TableResponse> {
     try {
         const url = `/arches/api/sage-tables.php`;
         const query = new URLSearchParams();

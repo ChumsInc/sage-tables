@@ -1,6 +1,9 @@
-import {TabList, TabType} from "../types";
+import {TabList, TabType} from "../../types";
 import {createAction, createReducer} from "@reduxjs/toolkit";
 import {loadTable} from "../tables";
+import {RootState} from "../../app/configureStore";
+import {addQuery} from "../queries";
+import {addTab, closeTab, setTab} from "./actions";
 
 export interface TabsState {
     list: TabList;
@@ -12,10 +15,6 @@ const initialState:TabsState = {
     currentTab: null,
 }
 
-export const addTab = createAction<{key:string, type:TabType}>('tabs/addTab')
-export const closeTab = createAction<string>('tabs/closeTab');
-
-export const setTab = createAction<string>('tabs/setCurrent');
 
 const tabsReducer = createReducer(initialState, (builder) => {
     builder
@@ -32,7 +31,7 @@ const tabsReducer = createReducer(initialState, (builder) => {
                     state.currentTab = keys[index + 1] ?? null;
                 }
             }
-            if (state.currentTab === null && Object.keys(state.list).length) {
+            if ((state.currentTab === null || !state.list[state.currentTab]) && Object.keys(state.list).length) {
                 state.currentTab = Object.keys(state.list).pop() ?? null;
             }
         })
@@ -42,8 +41,17 @@ const tabsReducer = createReducer(initialState, (builder) => {
             }
         })
         .addCase(loadTable.pending, (state, action) => {
-            state.list[action.meta.arg.key] = 'table';
+            state.list[action.meta.arg] = 'table';
+            state.currentTab = action.meta.arg;
+        })
+        .addCase(addQuery, (state, action) => {
+            state.list[action.payload.key] = 'query';
+            state.currentTab = action.payload.key;
         })
 });
+
+export const selectTabs = (state:RootState) => state.tabs.list;
+export const selectCurrentTab = (state:RootState) => state.tabs.currentTab;
+
 
 export default tabsReducer;

@@ -1,52 +1,62 @@
-.table-column-list,
-.table-results,
-.sage-table-list {
-  font-size: small;
+:root {
+  --bs-font-monospace: "Roboto Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
-.table-column-list thead th,
-.table-results thead th,
-.sage-table-list thead th {
+
+#app .db-tables-list-container .table-list-pagination {
+  --bs-gutter-y: 0 !important;
+  --bs-gutter-x: 0 !important;
+}
+#app .db-tables-list button.db-table-info {
+  border: 0;
+  height: auto;
+  width: auto;
+  background-color: transparent;
+}
+#app .db-tables-list .db-table {
+  cursor: pointer;
+}
+#app .db-create-table {
+  white-space: pre-wrap;
+}
+#app .db-create-table * {
+  white-space: pre-wrap;
+}
+#app .query-results-container .table {
+  font-family: var(--bs-font-monospace);
   white-space: nowrap;
 }
-.table-column-list tbody td,
-.table-results tbody td,
-.sage-table-list tbody td {
+#app .query-results-container .table th {
+  background-color: #282a2e;
+  color: #e0e0e0;
+  border-right: 1px solid #969896;
+}
+#app .query-results-container .table td {
   white-space: nowrap;
-  font-family: "Roboto Mono", monospace;
+  border-right: 1px solid #e0e0e0;
 }
-.table-column-list tbody td .zoom-table,
-.table-results tbody td .zoom-table,
-.sage-table-list tbody td .zoom-table {
-  padding-right: 1rem;
+#app .query-results-container .table td:first-child {
+  border-left: 1px solid #e0e0e0;
 }
-
-.row.form-inline {
-  align-items: flex-end;
+#app .query-results-container .table td.text-date {
+  color: #198844;
 }
-
-.CodeMirror {
-  border: 1px solid #eee;
-  height: auto !important;
+#app .query-results-container .table td.text-varchar {
+  color: #282a2e;
 }
-.CodeMirror .CodeMirror-scroll {
-  max-height: 33vh;
+#app .query-results-container .table td.text-decimal {
+  color: #F96A38;
 }
-
-.null-content {
-  font-family: monospace;
-  color: #a3a3a3;
-  padding: 0.25rem;
+#app .query-results-container .table td.text-muted {
+  opacity: 0.5;
 }
-
-.query-results {
-  overflow-x: auto;
+#app .query-results-container .table td.text-wrap {
+  white-space: normal;
 }
-
-.table-responsive {
-  max-height: 90vh;
+#app .query-results-container .table tbody tr:hover {
+  background-color: rgba(251, 169, 34, 0.2509803922);
 }
-.table-responsive .table-sticky thead tr:nth-child(1) th {
-  top: 0;
+#app .query-results-container .table tbody tr.selected {
+  background-color: rgba(251, 169, 34, 0.5019607843);
 }
 
 /*# sourceMappingURL=styles.css.map */

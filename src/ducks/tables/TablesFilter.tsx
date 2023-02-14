@@ -3,7 +3,17 @@ import {useSelector} from "react-redux";
 
 import {SpinnerButton} from "chums-components";
 import {useAppDispatch} from "../../app/configureStore";
-import {loadTables, selectCompany, selectFilter, selectLoading, selectServer} from "./index";
+import {
+    loadTables,
+    selectCompany,
+    selectFilter,
+    selectLoading,
+    selectServer,
+    setCompany,
+    setFilter,
+    setServer
+} from "./index";
+import {CompanyCode, ServerName} from "../../types";
 
 const TablesFilter:React.FC = () => {
     const dispatch = useAppDispatch();
@@ -13,25 +23,27 @@ const TablesFilter:React.FC = () => {
     const loading = useSelector(selectLoading);
 
     useEffect(() => {
-        dispatch(loadTables(company));
-    }, [])
+        dispatch(loadTables());
+    }, []);
+
+    useEffect(() => {
+        dispatch(loadTables())
+    }, [server, company])
 
     const handleServerChange = (ev:ChangeEvent<HTMLSelectElement>) => {
-        dispatch(serverChangedAction(ev.target.value));
-        dispatch(loadTablesAction())
+        dispatch(setServer(ev.target.value as ServerName));
     }
 
     const handleCompanyChange = (ev:ChangeEvent<HTMLSelectElement>) => {
-        dispatch(serverChangedAction(ev.target.value));
-        dispatch(loadTablesAction())
+        dispatch(setCompany(ev.target.value as CompanyCode));
     }
 
     const onReload = () => {
-        dispatch(loadTablesAction())
+        dispatch(loadTables())
     }
 
     const handleFilterChange = (ev:ChangeEvent<HTMLInputElement>) => {
-        dispatch(filterChangedAction(ev.target.value));
+        dispatch(setFilter(ev.target.value));
     }
     return (
         <div>
@@ -49,8 +61,12 @@ const TablesFilter:React.FC = () => {
                 </select>
                 <SpinnerButton type="button" color="primary" spinning={loading} onClick={onReload}>Reload</SpinnerButton>
             </div>
-            <div>
-                <input type="search" className="form-control form-control-sm" value={filter} onChange={handleFilterChange} />
+            <div className="mt-1">
+                <div className="input-group input-group-sm">
+                    <div className="input-group-text"><span className="bi-funnel-fill" /></div>
+                    <input type="search" className="form-control form-control-sm"
+                           value={filter} onChange={handleFilterChange} placeholder="Filter" />
+                </div>
             </div>
         </div>
     )

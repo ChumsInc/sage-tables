@@ -1,13 +1,11 @@
-import {ActionStatus, ServerName, TableResponse} from "../types";
-import {createAction, createAsyncThunk, createReducer} from "@reduxjs/toolkit";
+import {ActionStatus, CompanyCode, ServerName, TableResponse} from "../../types";
+import {createAction, createAsyncThunk, createReducer, createSelector} from "@reduxjs/toolkit";
 import {fetchTable, fetchTables} from "../../api/tables";
 import {RootState} from "../../app/configureStore";
 
-export const tableId = 'server-list';
-
 export interface TablesState {
     server: ServerName;
-    company: string;
+    company: CompanyCode;
     list: string[];
     filter: string;
     tableDetail: {
@@ -29,32 +27,54 @@ export const initialTablesState: TablesState = {
     rowsPerPage: 25,
 }
 
-export const selectServer = (state:RootState) => state.tables.server;
-export const selectCompany = (state:RootState) => state.tables.company;
-export const selectFilter = (state:RootState) => state.tables.filter;
-export const selectTables = (state:RootState) => state.tables.list;
-export const selectTable = (state:RootState, table: string) => state.tables.tableDetail[table] ?? null;
-export const selectLoading = (state:RootState) => state.tables.status === 'pending';
-export const selectRowsPerPage = (state:RootState) => state.tables.rowsPerPage;
-export const selectPage = (state:RootState) => state.tables.page;
+export const selectServer = (state: RootState) => state.tables.server;
+export const selectCompany = (state: RootState) => state.tables.company;
+
+export const selectFilter = (state: RootState) => state.tables.filter;
+export const selectTables = (state: RootState) => state.tables.list;
+export const selectTable = (state: RootState, table: string) => state.tables.tableDetail[table] ?? null;
+export const selectLoading = (state: RootState) => state.tables.status === 'pending';
+export const selectRowsPerPage = (state: RootState) => state.tables.rowsPerPage;
+export const selectPage = (state: RootState) => state.tables.page;
+
+export const selectFilteredTablesList = createSelector(
+    [selectFilter, selectTables],
+    (filter, tables) => {
+        return tables
+            .filter(table => table.toLowerCase().includes(filter.toLowerCase()))
+            .sort();
+    }
+)
 
 
 export const setServer = createAction<ServerName>('list/setServer');
-export const setCompany = createAction<string>('list/setCompany');
+export const setCompany = createAction<CompanyCode>('list/setCompany');
 
 export const setFilter = createAction<string>('list/setFilter');
 
-export const loadTables = createAsyncThunk<string[], ServerName>(
+export const loadTables = createAsyncThunk<string[]>(
     'list/loadList',
-    async (arg) => {
-        return await fetchTables(arg);
+    async (arg, {getState}) => {
+        const state = getState() as RootState;
+        const server = selectServer(state);
+        const company = selectCompany(state);
+        return await fetchTables({server, company});
     },
+    {
+        condition(arg, {getState}) {
+            const state = getState() as RootState;
+            return !selectLoading(state);
+        }
+    }
 )
 
 export const loadTable = createAsyncThunk<TableResponse, string>(
     'list/loadTable',
-    async (arg) => {
-        return await fetchTable('CHI', arg);
+    async (arg, {getState}) => {
+        const state = getState() as RootState;
+        const server = selectServer(state);
+        const company = selectCompany(state);
+        return await fetchTable({server, company}, arg);
     }
 )
 
@@ -75,7 +95,6 @@ const tablesReducer = createReducer(initialTablesState, (builder) => {
             state.filter = action.payload;
         })
         .addCase(loadTables.pending, (state, action) => {
-            state.server = action.meta.arg;
             state.status = 'pending';
         })
         .addCase(loadTables.fulfilled, (state, action) => {
@@ -92,7 +111,13 @@ const tablesReducer = createReducer(initialTablesState, (builder) => {
         })
         .addCase(loadTable.pending, (state, action) => {
             if (!state.tableDetail[(action.meta.arg)]) {
-                state.tableDetail[(action.meta.arg)] = {columns: [], indexes: {}, raw: [], primary_keys: []}
+                state.tableDetail[(action.meta.arg)] = {
+                    tableName: action.meta.arg,
+                    columns: [],
+                    indexes: {},
+                    raw: [],
+                    primary_keys: []
+                }
             }
             state.tableDetail[(action.meta.arg)].loading = true;
         })
@@ -101,7 +126,13 @@ const tablesReducer = createReducer(initialTablesState, (builder) => {
         })
         .addCase(loadTable.rejected, (state, action) => {
             if (!state.tableDetail[(action.meta.arg)]) {
-                state.tableDetail[(action.meta.arg)] = {columns: [], indexes: {}, raw: [], primary_keys: []}
+                state.tableDetail[(action.meta.arg)] = {
+                    tableName: action.meta.arg,
+                    columns: [],
+                    indexes: {},
+                    raw: [],
+                    primary_keys: []
+                }
             }
             state.tableDetail[(action.meta.arg)].loading = false;
         })

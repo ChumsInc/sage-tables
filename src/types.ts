@@ -1,7 +1,11 @@
+import {Editable} from "chums-types";
+import {SortProps} from "chums-components";
+
 export type ActionStatus = 'idle'|'pending'|'fulfilled'|'rejected';
 
 export interface Query {
-    company: string;
+    key: string;
+    company: CompanyCode;
     limit: number;
     offset: number;
     sql: string;
@@ -9,7 +13,10 @@ export interface Query {
     response: QueryResponse|null;
     dirty: boolean;
     status: ActionStatus;
+    sort:SortProps<DataRow>;
 }
+
+export type QueryChangeProps = Partial<Query> & Pick<Query, 'key'> ;
 
 export type FieldType = 'VARCHAR'|'DECIMAL'|'DATE'|'LONGVARCHAR';
 
@@ -19,6 +26,7 @@ export interface QueryField {
 }
 
 export interface DataRow {
+    _id: number;
     [field:string]: string|number|null;
 }
 
@@ -34,7 +42,7 @@ export interface QueryResponse {
 }
 
 export interface QueryList {
-    [key:string]: Query|TableResponse;
+    [key:string]: Query & Editable;
 }
 
 export interface TableIndex {
@@ -81,6 +89,7 @@ export interface RawIndex {
 }
 
 export interface TableResponse {
+    tableName: string;
     columns: TableColumn[],
     indexes: {
         [key:string]: TableIndex;
@@ -97,3 +106,9 @@ export interface TabList {
 }
 
 export type ServerName = 'ARCHES';
+export type CompanyCode = 'CHI'|'TST';
+
+export interface CompanyServer {
+    server: ServerName;
+    company: CompanyCode;
+}

@@ -4,9 +4,11 @@ import tablesReducer from "../ducks/tables";
 import tabsReducer from "../ducks/tabs";
 import alertsReducer from "../ducks/alerts";
 import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
+import queriesReducer from "../ducks/queries";
 
 const rootReducer = combineReducers({
     alerts: alertsReducer,
+    queries: queriesReducer,
     tables: tablesReducer,
     tabs: tabsReducer,
 })
