@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {useAppDispatch, useAppSelector} from "../../app/configureStore";
 import {selectQuerySort, selectSortedQueryResponse, setQuerySort} from "./index";
 import QueryDuration from "./QueryDuration";
-import {SortableTable, SortableTableField, TablePagination} from "chums-components";
+import {Alert, SortableTable, SortableTableField, TablePagination} from "chums-components";
 import {DataRow, QueryField} from "../../types";
 import classNames from "classnames";
 import {SortProps} from "chums-types";
@@ -92,6 +92,9 @@ export default function QueryResult({queryKey}: { queryKey: string }) {
                 <SortableTable fields={Fields.map(tableField)} data={Data.slice(page * rpp, page * rpp + rpp)} size="xs"
                                currentSort={sort} keyField="_id" onChangeSort={sortChangeHandler}/>
             </div>
+            {!!Error && (
+                <Alert color="warning">{Error}</Alert>
+            )}
             <TablePagination page={page} onChangePage={setPage} bsSize="sm"
                              rowsPerPage={rpp} onChangeRowsPerPage={rowsPerPageChangeHandler}
                              showFirst showLast
