@@ -7,6 +7,7 @@ import {addQuery} from "../ducks/queries";
 import {emptyQuery, getQueryKey} from "../utils";
 import {useSelector} from "react-redux";
 import {selectCompany} from "../ducks/tables";
+import {loadVersion} from "../ducks/version";
 
 
 const App = () => {
@@ -14,6 +15,7 @@ const App = () => {
     const company = useSelector(selectCompany);
 
     useEffect(() => {
+        dispatch(loadVersion());
         dispatch(addQuery({
             ...emptyQuery(company),
             key: getQueryKey(),

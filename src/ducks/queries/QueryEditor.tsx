@@ -1,33 +1,35 @@
-import React, {ChangeEvent, useEffect, useRef, KeyboardEvent} from 'react';
+import React, {ChangeEvent, KeyboardEvent} from 'react';
 import {executeQuery, selectQuery, updateQuery} from "./index";
 import {useAppDispatch, useAppSelector} from "../../app/configureStore";
 import CompanySelect from "./CompanySelect";
 import {CompanyCode, Query} from "../../types";
 import {TextareaAutosize} from "@mui/base";
 import {SpinnerButton} from "chums-components";
+import {selectCurrentVersion} from "../version";
 
 
 const QueryEditor = ({queryKey}: { queryKey: string }) => {
     const dispatch = useAppDispatch();
     const query = useAppSelector(state => selectQuery(state, queryKey));
+    const version = useAppSelector(selectCurrentVersion);
 
 
-    const queryChangeHandler = (field: keyof Pick<Query, 'company'|'limit'|'offset'|'sql'>) =>
+    const queryChangeHandler = (field: keyof Pick<Query, 'company' | 'limit' | 'offset' | 'sql'>) =>
         (ev: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
-        switch (field) {
-        case 'limit':
-        case 'offset':
-            dispatch(updateQuery({key: queryKey, [field]: +ev.target.value}));
-            return
-        case 'company':
-            dispatch(updateQuery({key: queryKey, [field]: ev.target.value as CompanyCode}));
-            return;
-        case 'sql':
-            dispatch(updateQuery({key: queryKey, [field]: ev.target.value}));
+            switch (field) {
+            case 'limit':
+            case 'offset':
+                dispatch(updateQuery({key: queryKey, [field]: +ev.target.value}));
+                return
+            case 'company':
+                dispatch(updateQuery({key: queryKey, [field]: ev.target.value as CompanyCode}));
+                return;
+            case 'sql':
+                dispatch(updateQuery({key: queryKey, [field]: ev.target.value}));
+            }
         }
-    }
 
-    const keyHandler = (ev:KeyboardEvent) => {
+    const keyHandler = (ev: KeyboardEvent) => {
         if (ev.ctrlKey && (ev.code === 'Enter' || ev.code === 'NumpadEnter')) {
             dispatch(executeQuery(query));
         }
@@ -69,11 +71,15 @@ const QueryEditor = ({queryKey}: { queryKey: string }) => {
                         Submit
                     </SpinnerButton>
                 </div>
+                <div className="col"/>
+                <div className="col-auto text-end">
+                    Version: {version}
+                </div>
             </div>
             <TextareaAutosize value={query.sql} onChange={queryChangeHandler('sql')} spellCheck={false}
                               disabled={query.status === 'pending'}
                               onKeyDown={keyHandler}
-                              className="form-control form-control-sm font-monospace" minRows={3} maxRows={10} />
+                              className="form-control form-control-sm font-monospace" minRows={3} maxRows={10}/>
         </div>
     )
 }
