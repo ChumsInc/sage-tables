@@ -29,7 +29,7 @@ export interface ColumnDefinitionProps {
 }
 const ColumnDefinition = ({colName, colType, size, decimals, nullable}:ColumnDefinitionProps) => {
     return (
-        <div>{'\t'}`{colName}` {mapColType(colType, size, decimals)} {nullable ? 'DEFAULT NULL' : 'NOT NULL'},</div>
+        <div>{'\t'}{colName} {mapColType(colType, size, decimals)} {nullable ? 'DEFAULT NULL' : 'NOT NULL'},</div>
     )
 }
 

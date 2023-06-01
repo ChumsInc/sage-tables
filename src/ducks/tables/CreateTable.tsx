@@ -1,10 +1,10 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, MouseEvent} from 'react';
 import {TableColumn} from "../../types";
 import ColumnDefinition from "./ColumnDefinition";
-import {SnackbarUnstyled} from "@mui/base";
-import {Alert} from "chums-components";
+import Snackbar from "@mui/base/Snackbar";
+import {Alert, FormCheck} from "chums-components";
 
-
+export type SQLFormat = 'MySQL'|'DDL';
 export interface CreateTableProps {
     table: string;
     columns: TableColumn[],
@@ -14,6 +14,8 @@ export interface CreateTableProps {
 const CreateTable = ({table, columns, primaryKeys}: CreateTableProps) => {
     const ref = useRef<HTMLElement | null>(null);
     const [message, setMessage] = useState<string | null>(null);
+    const [format, setFormat] = useState<SQLFormat>('MySQL');
+
     const clickHandler = () => {
         if (ref.current) {
             const sql = ref.current?.innerText ?? '';
@@ -30,14 +32,25 @@ const CreateTable = ({table, columns, primaryKeys}: CreateTableProps) => {
     }
     return (
         <div className="mb-3">
-            <h4 onClick={clickHandler} style={{cursor: 'pointer'}}>Create Table <small>(for MySQL)</small></h4>
-            <SnackbarUnstyled open={!!message} onClose={() => setMessage(null)}
+            <div className="d-flex align-items-baseline">
+                <h4 onClick={clickHandler} style={{cursor: 'pointer'}}>
+                    Create Table
+                </h4>
+                <div className="ms-3">
+                    <FormCheck type="radio" checked={format === 'MySQL'} inline onChange={() => setFormat('MySQL')}>MySQL</FormCheck>
+                    <FormCheck type="radio" checked={format === 'DDL'} inline onChange={() => setFormat('DDL')}>DDL</FormCheck>
+                </div>
+                <div className="ms-3">
+                    <button type="button" className="btn btn-sm btn-outline-secondary" onClick={clickHandler}>Copy Definition</button>
+                </div>
+            </div>
+            <Snackbar open={!!message} onClose={() => setMessage(null)}
                               autoHideDuration={5000}>
                 <Alert color="info" canDismiss onDismiss={() => setMessage(null)}>Content copied to clipboard.</Alert>
-            </SnackbarUnstyled>
+            </Snackbar>
             <code className="db-create-table" ref={ref}>
-                CREATE TABLE IF NOT EXISTS `c2`.`{table}` (
-                <ColumnDefinition colName="Company" colType="VARCHAR" size={15} nullable={false}/>
+                CREATE TABLE IF NOT EXISTS {format === 'MySQL' && 'c2.'}{table} (
+                {format === 'MySQL' && <ColumnDefinition colName="Company" colType="VARCHAR" size={15} nullable={false}/>}
                 {columns.map(c => (
                     <ColumnDefinition key={c.COLUMN_NAME}
                                       colName={c.COLUMN_NAME}
@@ -47,8 +60,8 @@ const CreateTable = ({table, columns, primaryKeys}: CreateTableProps) => {
                                       nullable={!primaryKeys.includes(c.COLUMN_NAME)}
                     />)
                 )}
-                <ColumnDefinition colName="timestamp" colType="timestamp" nullable={false}/>
-                {'\t'}PRIMARY KEY (`Company`, {primaryKeys.map(col => '`' + col + '`').join(',')})
+                {format === 'MySQL' && <ColumnDefinition colName="timestamp" colType="timestamp" nullable={false}/>}
+                {'\t'}PRIMARY KEY ({format === 'MySQL' && 'Company,'}{primaryKeys.map(col => '`' + col + '`').join(',')})
                 {'\n'}
                 )
             </code>

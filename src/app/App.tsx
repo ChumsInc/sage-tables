@@ -14,6 +14,7 @@ const App = () => {
     const dispatch = useAppDispatch();
     const company = useSelector(selectCompany);
 
+
     useEffect(() => {
         dispatch(loadVersion());
         dispatch(addQuery({

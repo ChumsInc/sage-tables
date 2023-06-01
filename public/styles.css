@@ -17,6 +17,9 @@
 }
 #app .db-create-table {
   white-space: pre-wrap;
+  max-height: 25rem;
+  overflow: auto;
+  display: block;
 }
 #app .db-create-table * {
   white-space: pre-wrap;

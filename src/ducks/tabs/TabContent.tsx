@@ -16,19 +16,19 @@ const TabContent = () => {
     }
 
     switch (tabs[currentTabKey]) {
-    case 'table':
-        return (
-            <ErrorBoundary>
-                <TableDetail tabKey={currentTabKey}/>
-            </ErrorBoundary>
-        );
-    case 'query':
-        return (
-            <ErrorBoundary>
-                <QueryEditor queryKey={currentTabKey} />
-                <QueryResult queryKey={currentTabKey} />
-            </ErrorBoundary>
-        );
+        case 'table':
+            return (
+                <ErrorBoundary>
+                    <TableDetail tabKey={currentTabKey}/>
+                </ErrorBoundary>
+            );
+        case 'query':
+            return (
+                <ErrorBoundary>
+                    <QueryEditor queryKey={currentTabKey}/>
+                    <QueryResult queryKey={currentTabKey}/>
+                </ErrorBoundary>
+            );
     }
 }
 

@@ -1,6 +1,6 @@
 import React, {useRef, useState} from "react";
 import {TableResponse} from "../../types";
-import {SnackbarUnstyled} from "@mui/base";
+import Snackbar from "@mui/base/Snackbar";
 import {Alert} from "chums-components";
 
 
@@ -26,10 +26,10 @@ const TableFields = ({columns, tableName}: Pick<TableResponse, 'columns' | 'tabl
         <div className="mb-3">
             <h4 onClick={clickHandler} style={{cursor: 'pointer'}}>Fields <small>(for
                 MASDataTransferImplementation.php)</small></h4>
-            <SnackbarUnstyled open={!!message} onClose={() => setMessage(null)}
+            <Snackbar open={!!message} onClose={() => setMessage(null)}
                               autoHideDuration={5000}>
                 <Alert color="info" canDismiss onDismiss={() => setMessage(null)}>Content copied to clipboard.</Alert>
-            </SnackbarUnstyled>
+            </Snackbar>
             <code ref={ref} className="db-create-table">
                 {'{'}
                 "SageCompanies": ["CHI"],{'\n'}

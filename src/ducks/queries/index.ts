@@ -1,6 +1,6 @@
 import {ActionStatus, DataRow, Query, QueryChangeProps, QueryList, QueryResponse} from "../../types";
 import {createAction, createAsyncThunk, createReducer, createSelector} from "@reduxjs/toolkit";
-import {defaultSort} from "../../utils";
+import {defaultSort, emptyQuery, getQueryKey} from "../../utils";
 import {RootState} from "../../app/configureStore";
 import {closeTab} from "../tabs/actions";
 import {execQuery} from "../../api/query";
@@ -10,6 +10,7 @@ export interface QueriesState {
     list: QueryList;
     status: ActionStatus;
 }
+
 
 const initialQueriesState: QueriesState = {
     list: {},

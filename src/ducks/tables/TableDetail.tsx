@@ -14,6 +14,7 @@ export interface TableDetailProps {
 const TableDetail = ({tabKey}: TableDetailProps) => {
     const table = useAppSelector((state) => selectTable(state, tabKey));
     const server = useAppSelector(selectServer);
+
     if (!table) {
         return null;
     }
