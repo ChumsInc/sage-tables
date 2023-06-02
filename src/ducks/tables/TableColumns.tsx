@@ -21,7 +21,7 @@ const TableColumns = ({columns, primaryKeys}:TableColumnsProps) => {
                         <td className="font-monospace">{field.COLUMN_NAME}</td>
                         <td className="font-monospace">
                             {field.TYPE_NAME}
-                            {(field.TYPE_NAME === 'VARCHAR' || field.TYPE_NAME === 'LONGVARCHAR') && (
+                            {(['VARCHAR', 'LONGVARCHAR', 'CHAR'].includes(field.TYPE_NAME)) && (
                                 <span>({field.COLUMN_SIZE})</span>
                             )}
                             {field.TYPE_NAME === 'DECIMAL' && (

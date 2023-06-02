@@ -11,6 +11,11 @@ const mapColType = (colType: FieldType|'timestamp', size?:number, decimals?:numb
         return `varchar(${size})`;
     case 'LONGVARCHAR':
         return 'TEXT';
+    case 'CHAR':
+        if (Number(size) > 256) {
+            return 'TEXT';
+        }
+        return `char(${size})`;
     case 'DECIMAL':
         return `decimal(${size},${decimals})`;
     case 'DATE':
