@@ -1,6 +1,6 @@
 {
   "name": "sage-tables",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Sage tables listing",
   "main": "index.js",
   "scripts": {
