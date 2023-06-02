@@ -30,7 +30,7 @@ const TableDetail = ({tabKey}: TableDetailProps) => {
                 <div className="col">
                     <TableIndexes indexes={table.indexes}/>
                     <TableFields columns={table.columns} tableName={table.tableName}/>
-                    <CreateTable table={tabKey} columns={table.columns} primaryKeys={table.primary_keys}/>
+                    <CreateTable table={tabKey} columns={table.columns} primaryKeys={table.primary_keys} indexes={table.indexes}/>
                 </div>
             </div>
         </div>

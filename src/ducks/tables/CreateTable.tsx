@@ -1,5 +1,5 @@
 import React, {useRef, useState, MouseEvent} from 'react';
-import {TableColumn} from "../../types";
+import {IndexList, TableColumn, TableIndex} from "../../types";
 import ColumnDefinition from "./ColumnDefinition";
 import Snackbar from "@mui/base/Snackbar";
 import {Alert, FormCheck} from "chums-components";
@@ -9,9 +9,10 @@ export interface CreateTableProps {
     table: string;
     columns: TableColumn[],
     primaryKeys: string[],
+    indexes: IndexList,
 }
 
-const CreateTable = ({table, columns, primaryKeys}: CreateTableProps) => {
+const CreateTable = ({table, columns, primaryKeys, indexes}: CreateTableProps) => {
     const ref = useRef<HTMLElement | null>(null);
     const [message, setMessage] = useState<string | null>(null);
     const [format, setFormat] = useState<SQLFormat>('MySQL');
@@ -63,7 +64,16 @@ const CreateTable = ({table, columns, primaryKeys}: CreateTableProps) => {
                 {format === 'MySQL' && <ColumnDefinition colName="timestamp" colType="timestamp" nullable={false}/>}
                 {'\t'}PRIMARY KEY ({format === 'MySQL' && 'Company,'}{primaryKeys.map(col => '`' + col + '`').join(',')})
                 {'\n'}
-                )
+                );
+                {format === 'DDL' && (
+                    <div className="mt-2">
+                        {Object.keys(indexes).map(key => (
+                            <div>
+                                CREATE INDEX {key} on {table} ({indexes[key].fields.join(', ')});
+                            </div>
+                        ))}
+                    </div>
+                )}
             </code>
         </div>
     )

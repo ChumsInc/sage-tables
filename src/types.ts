@@ -88,12 +88,13 @@ export interface RawIndex {
     FILTER_CONDITION: null;
 }
 
+export interface IndexList {
+    [key:string]: TableIndex;
+}
 export interface TableResponse {
     tableName: string;
     columns: TableColumn[],
-    indexes: {
-        [key:string]: TableIndex;
-    },
+    indexes: IndexList,
     primary_keys: string[];
     raw: RawIndex[];
     loading?: boolean;
