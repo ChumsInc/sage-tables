@@ -1,10 +1,11 @@
-import React, {useRef, useState, MouseEvent} from 'react';
-import {IndexList, TableColumn, TableIndex} from "../../types";
+import React, {useRef, useState} from 'react';
+import {IndexList, TableColumn} from "../../types";
 import ColumnDefinition from "./ColumnDefinition";
 import Snackbar from "@mui/base/Snackbar";
 import {Alert, FormCheck} from "chums-components";
 
-export type SQLFormat = 'MySQL'|'DDL';
+export type SQLFormat = 'MySQL' | 'DDL';
+
 export interface CreateTableProps {
     table: string;
     columns: TableColumn[],
@@ -38,20 +39,25 @@ const CreateTable = ({table, columns, primaryKeys, indexes}: CreateTableProps) =
                     Create Table
                 </h4>
                 <div className="ms-3">
-                    <FormCheck type="radio" checked={format === 'MySQL'} inline onChange={() => setFormat('MySQL')}>MySQL</FormCheck>
-                    <FormCheck type="radio" checked={format === 'DDL'} inline onChange={() => setFormat('DDL')}>DDL</FormCheck>
+                    <FormCheck type="radio" checked={format === 'MySQL'} inline
+                               onChange={() => setFormat('MySQL')}>MySQL</FormCheck>
+                    <FormCheck type="radio" checked={format === 'DDL'} inline
+                               onChange={() => setFormat('DDL')}>DDL</FormCheck>
                 </div>
                 <div className="ms-3">
-                    <button type="button" className="btn btn-sm btn-outline-secondary" onClick={clickHandler}>Copy Definition</button>
+                    <button type="button" className="btn btn-sm btn-outline-secondary" onClick={clickHandler}>Copy
+                        Definition
+                    </button>
                 </div>
             </div>
             <Snackbar open={!!message} onClose={() => setMessage(null)}
-                              autoHideDuration={5000}>
+                      autoHideDuration={5000}>
                 <Alert color="info" canDismiss onDismiss={() => setMessage(null)}>Content copied to clipboard.</Alert>
             </Snackbar>
             <code className="db-create-table" ref={ref}>
                 CREATE TABLE {format === 'MySQL' && 'IF NOT EXISTS c2.'}{table} (
-                {format === 'MySQL' && <ColumnDefinition colName="Company" colType="VARCHAR" size={15} nullable={false}/>}
+                {format === 'MySQL' &&
+                    <ColumnDefinition colName="Company" colType="VARCHAR" size={15} nullable={false}/>}
                 {columns.map(c => (
                     <ColumnDefinition key={c.COLUMN_NAME}
                                       colName={c.COLUMN_NAME}
