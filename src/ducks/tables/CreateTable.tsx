@@ -49,7 +49,7 @@ const CreateTable = ({table, columns, primaryKeys}: CreateTableProps) => {
                 <Alert color="info" canDismiss onDismiss={() => setMessage(null)}>Content copied to clipboard.</Alert>
             </Snackbar>
             <code className="db-create-table" ref={ref}>
-                CREATE TABLE IF NOT EXISTS {format === 'MySQL' && 'c2.'}{table} (
+                CREATE TABLE {format === 'MySQL' && 'IF NOT EXISTS c2.'}{table} (
                 {format === 'MySQL' && <ColumnDefinition colName="Company" colType="VARCHAR" size={15} nullable={false}/>}
                 {columns.map(c => (
                     <ColumnDefinition key={c.COLUMN_NAME}
