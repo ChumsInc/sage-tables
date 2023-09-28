@@ -1,5 +1,5 @@
 import {CompanyCode, DataRow, Query, TableResponse} from "./types";
-import {SortProps} from "chums-types";
+import {SortProps} from "chums-components";
 
 export const noop = () => {};
 export const now = () => new Date().valueOf();

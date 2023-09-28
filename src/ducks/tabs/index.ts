@@ -1,16 +1,15 @@
-import {TabList, TabType} from "../../types";
-import {createAction, createReducer} from "@reduxjs/toolkit";
+import {TabList} from "../../types";
+import {createReducer} from "@reduxjs/toolkit";
 import {loadTable} from "../tables";
-import {RootState} from "../../app/configureStore";
 import {addQuery} from "../queries";
 import {addTab, closeTab, setTab} from "./actions";
 
 export interface TabsState {
     list: TabList;
-    currentTab: string|null;
+    currentTab: string | null;
 }
 
-const initialState:TabsState = {
+const initialState: TabsState = {
     list: {},
     currentTab: null,
 }
@@ -49,9 +48,6 @@ const tabsReducer = createReducer(initialState, (builder) => {
             state.currentTab = action.payload.key;
         })
 });
-
-export const selectTabs = (state:RootState) => state.tabs.list;
-export const selectCurrentTab = (state:RootState) => state.tabs.currentTab;
 
 
 export default tabsReducer;

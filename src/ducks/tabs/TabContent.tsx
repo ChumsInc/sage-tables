@@ -1,6 +1,6 @@
 import React from 'react';
 import {useSelector} from "react-redux";
-import {selectCurrentTab, selectTabs} from "./index";
+import {selectCurrentTab, selectTabs} from "./selectors";
 import ErrorBoundary from "../../common-components/ErrorBoundary";
 import TableDetail from "../tables/TableDetail";
 import QueryEditor from "../queries/QueryEditor";

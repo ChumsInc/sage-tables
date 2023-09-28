@@ -1,6 +1,6 @@
 import React, {useRef, useState} from "react";
 import {TableResponse} from "../../types";
-import Snackbar from "@mui/base/Snackbar";
+import Snackbar from "@mui/material/Snackbar";
 import {Alert} from "chums-components";
 
 

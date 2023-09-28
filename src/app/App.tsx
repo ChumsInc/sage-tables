@@ -7,7 +7,7 @@ import {addQuery} from "../ducks/queries";
 import {emptyQuery, getQueryKey} from "../utils";
 import {useSelector} from "react-redux";
 import {selectCompany} from "../ducks/tables";
-import {loadVersion} from "../ducks/version";
+import {AppVersion} from "chums-components";
 
 
 const App = () => {
@@ -16,7 +16,6 @@ const App = () => {
 
 
     useEffect(() => {
-        dispatch(loadVersion());
         dispatch(addQuery({
             ...emptyQuery(company),
             key: getQueryKey(),
@@ -27,6 +26,7 @@ const App = () => {
         <div className="row g-3">
             <div className="col-auto" style={{minWidth: '350px', maxWidth: '350px'}}>
                 <TablesContainer />
+                <AppVersion />
             </div>
             <div className="col" style={{minWidth: 'calc(100% - 350px - var(--bs-gutter-x))'}}>
                 <Tabs />

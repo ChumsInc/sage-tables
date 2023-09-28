@@ -4,7 +4,8 @@ import {defaultSort, emptyQuery, getQueryKey} from "../../utils";
 import {RootState} from "../../app/configureStore";
 import {closeTab} from "../tabs/actions";
 import {execQuery} from "../../api/query";
-import {SortProps} from "chums-types";
+import {SortProps} from "chums-components";
+import {selectCurrentTab} from "../tabs/selectors";
 
 export interface QueriesState {
     list: QueryList;
@@ -17,6 +18,7 @@ const initialQueriesState: QueriesState = {
     status: "idle",
 }
 
+export const selectQueryList = (state:RootState) => state.queries.list;
 export const selectQuery = (state: RootState, key: string) => state.queries.list[key];
 export const selectQuerySort = (state: RootState, key: string) => state.queries.list[key].sort;
 export const selectQueryLoading = (state: RootState, key: string) => state.queries.list[key].status === 'pending';
@@ -27,6 +29,16 @@ export const selectQueryResponseQuery = (state: RootState, key: string) => state
 export const selectQueryResponseError = (state: RootState, key: string) => state.queries.list[key].response?.Error ?? '';
 export const selectQueryResponseTimings = (state: RootState, key: string) => state.queries.list[key].response?.timings ?? null;
 export const selectQueryResponseCompany = (state: RootState, key: string) => state.queries.list[key].response?.Company ?? '';
+
+export const selectCurrentQuery = createSelector(
+    [selectQueryList, selectCurrentTab],
+    (list, tab) => {
+        if (!tab) {
+            return null;
+        }
+        return list[tab] ?? null;
+    }
+)
 
 const dataSorter = (sort:SortProps<DataRow>) => (a:DataRow, b:DataRow) => {
     const aVal = a[sort.field as string] ?? '';

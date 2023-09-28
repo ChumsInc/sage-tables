@@ -1,12 +1,13 @@
 import React, {MouseEvent} from 'react';
 import {useAppDispatch} from "../../app/configureStore";
 import {useSelector} from "react-redux";
-import {selectCurrentTab, selectTabs} from "./index";
+import {selectCurrentTab, selectTabs} from "./selectors";
 import {addQuery} from "../queries";
 import {selectCompany} from "../tables";
 import {emptyQuery, getQueryKey} from "../../utils";
 import {TabItem} from "chums-components";
 import {closeTab, setTab} from "./actions";
+import dayjs from "dayjs";
 
 const Tabs = () => {
     const dispatch = useAppDispatch();
@@ -43,7 +44,7 @@ const Tabs = () => {
             </li>
             {Object.keys(tabs).map(key => (
                 <TabItem key={key} id={key} active={currentTab === key}
-                         title={/^[a-z0-9]+$/.test(key) ? (new Date(parseInt(key, 36)).toLocaleTimeString()) : key}
+                         title={/^[a-z0-9]+$/.test(key) ? (dayjs(parseInt(key, 36)).format('HH:mm:ss')) : key}
                          canClose
                          onSelect={onSelectTab}
                          onClose={onCloseTab}/>

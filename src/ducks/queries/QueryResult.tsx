@@ -34,7 +34,7 @@ const renderedField = ({field, row}: { field: QueryField, row: DataRow }) => {
 const tableField = (field: QueryField): SortableTableField => {
     return {
         field: field.Name,
-        title: field.Name,
+        title: <span title={field.FieldType}>{field.Name}</span>,
         sortable: true,
         className: (row) => classNames({
             'text-end': field.FieldType === 'DECIMAL',

@@ -1,7 +1,7 @@
 import React, {useRef, useState} from 'react';
 import {IndexList, TableColumn} from "../../types";
 import ColumnDefinition from "./ColumnDefinition";
-import Snackbar from "@mui/base/Snackbar";
+import Snackbar from "@mui/material/Snackbar";
 import {Alert, FormCheck} from "chums-components";
 
 export type SQLFormat = 'MySQL' | 'DDL';

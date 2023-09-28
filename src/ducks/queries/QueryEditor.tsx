@@ -3,15 +3,14 @@ import {executeQuery, selectQuery, updateQuery} from "./index";
 import {useAppDispatch, useAppSelector} from "../../app/configureStore";
 import CompanySelect from "./CompanySelect";
 import {CompanyCode, Query} from "../../types";
-import {TextareaAutosize} from "@mui/base";
+import TextareaAutosize from "@mui/material/TextareaAutosize";
 import {SpinnerButton} from "chums-components";
-import {selectCurrentVersion} from "../version";
+
 
 
 const QueryEditor = ({queryKey}: { queryKey: string }) => {
     const dispatch = useAppDispatch();
     const query = useAppSelector(state => selectQuery(state, queryKey));
-    const version = useAppSelector(selectCurrentVersion);
 
 
     const queryChangeHandler = (field: keyof Pick<Query, 'company' | 'limit' | 'offset' | 'sql'>) =>
@@ -72,9 +71,6 @@ const QueryEditor = ({queryKey}: { queryKey: string }) => {
                     </SpinnerButton>
                 </div>
                 <div className="col"/>
-                <div className="col-auto text-end">
-                    Version: {version}
-                </div>
             </div>
             <TextareaAutosize value={query.sql} onChange={queryChangeHandler('sql')} spellCheck={false}
                               disabled={query.status === 'pending'}
