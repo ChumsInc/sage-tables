@@ -1,55 +1,76 @@
-.table-column-list,
-.table-results,
-.sage-table-list {
-  font-size: small;
-  thead {
-    th {
-      white-space: nowrap;
+:root {
+  --bs-font-monospace: "Roboto Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+#app {
+  .db-tables-list-container {
+    .table-list-pagination {
+      --bs-gutter-y: 0 !important;
+      --bs-gutter-x: 0 !important;
     }
   }
-  tbody {
-    td {
+
+  .db-tables-list {
+    button.db-table-info {
+      border: 0;
+      height: auto;
+      width: auto;
+      background-color: transparent;
+    }
+
+    .db-table {
+      cursor: pointer;
+    }
+  }
+
+  .db-create-table {
+    white-space: pre-wrap;
+    max-height: 25rem;
+    overflow: auto;
+    display: block;
+    * {
+      white-space: pre-wrap;
+    }
+  }
+
+  .query-results-container {
+    .table {
+      font-family: var(--bs-font-monospace);
       white-space: nowrap;
-      font-family: "Roboto Mono", monospace;
-      .zoom-table {
-        padding-right: 1rem;
+      th {
+        background-color: #282a2e;
+        color: #e0e0e0;
+        border-right: 1px solid #969896;
+      }
+      td {
+        &:first-child {
+          border-left: 1px solid #e0e0e0;
+        }
+        white-space: nowrap;
+        border-right: 1px solid #e0e0e0;
+        &.text-date {
+          color: #198844;
+        }
+        &.text-varchar {
+          color: #282a2e;
+        }
+        &.text-decimal {
+          color: #F96A38;
+        }
+        &.text-muted {
+          opacity: 0.5;
+        }
+      }
+      td.text-wrap {
+        white-space: normal;
+      }
+
+      tbody tr:hover {
+        background-color: #FBA92240;
+      }
+      tbody tr.selected {
+        background-color: #FBA92280;
       }
     }
   }
-}
-
-.row.form-inline {
-  align-items: flex-end;
-}
-
-.query-results-container {
-  //overflow: auto;
-}
-.CodeMirror {
-  border: 1px solid #eee;
-  height: auto !important;
-  .CodeMirror-scroll {
-    max-height: 33vh;
-  }
-}
-
-.null-content {
-  font-family: monospace;
-  color: #a3a3a3;
-  padding: 0.25rem;
-}
-
-.query-results {
-  overflow-x: auto;
-
-}
-
-.table-responsive {
-  max-height: 90vh;
-  .table-sticky {
-    thead tr:nth-child(1) th {
-      top: 0;
-    }
-  }
-
 }

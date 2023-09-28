@@ -1,2 +1,2 @@
 <?php
-$allowedGroups = array('root', 'production');
+$allowedGroups = array('root');
