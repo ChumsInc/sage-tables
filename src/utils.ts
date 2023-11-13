@@ -19,6 +19,8 @@ export const emptyQuery = (company:CompanyCode):Query => ({
     dirty: false,
     status: 'idle',
     sort: {...defaultSort},
+    page: 0,
+    rowsPerPage: 10,
 });
 
 

@@ -14,9 +14,13 @@ export interface Query {
     dirty: boolean;
     status: ActionStatus;
     sort:SortProps<DataRow>;
+    page: number;
+    rowsPerPage: number;
 }
 
 export type QueryChangeProps = Partial<Query> & Pick<Query, 'key'> ;
+export type QueryPageProps = Pick<Query, 'key'|'page'>;
+export type QueryRowsPerPageProps = Pick<Query, 'key'|'rowsPerPage'>;
 
 export type FieldType = 'VARCHAR'|'DECIMAL'|'DATE'|'LONGVARCHAR';
 

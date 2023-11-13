@@ -1,4 +1,13 @@
-import {ActionStatus, DataRow, Query, QueryChangeProps, QueryList, QueryResponse} from "../../types";
+import {
+    ActionStatus,
+    DataRow,
+    Query,
+    QueryChangeProps,
+    QueryList,
+    QueryPageProps,
+    QueryResponse,
+    QueryRowsPerPageProps
+} from "../../types";
 import {createAction, createAsyncThunk, createReducer, createSelector} from "@reduxjs/toolkit";
 import {defaultSort, emptyQuery, getQueryKey} from "../../utils";
 import {RootState} from "../../app/configureStore";
@@ -23,6 +32,8 @@ export const selectQuery = (state: RootState, key: string) => state.queries.list
 export const selectQuerySort = (state: RootState, key: string) => state.queries.list[key].sort;
 export const selectQueryLoading = (state: RootState, key: string) => state.queries.list[key].status === 'pending';
 export const selectQueryResponse = (state: RootState, key: string) => state.queries.list[key].response;
+export const selectQueryPage = (state:RootState, key:string) => state.queries.list[key].page;
+export const selectQueryRowsPerPage = (state:RootState, key:string) => state.queries.list[key].rowsPerPage;
 export const selectQueryResponseFields = (state: RootState, key: string) => state.queries.list[key].response?.Fields ?? [];
 export const selectQueryResponseData = (state: RootState, key: string) => state.queries.list[key].response?.Data ?? [];
 export const selectQueryResponseQuery = (state: RootState, key: string) => state.queries.list[key].response?.Query ?? '';
@@ -62,6 +73,9 @@ export const selectSortedQueryResponse = createSelector(
 
 export const updateQuery = createAction<QueryChangeProps>('queries/setQuery');
 export const setQuerySort = createAction<QueryChangeProps>('queries/setSort');
+export const setQueryPage = createAction<QueryPageProps>('queries/setPage');
+export const setQueryRowsPerPage = createAction<QueryRowsPerPageProps>('queries/setRowPerPage');
+
 
 export const addQuery = createAction<Query>('queries/addQuery');
 export const executeQuery = createAsyncThunk<QueryResponse, Query>(
@@ -102,6 +116,7 @@ const queriesReducer = createReducer(initialQueriesState, (builder) => {
             if (state.list[key]) {
                 state.list[key].status = 'fulfilled';
                 state.list[key].response = action.payload;
+                state.list[key].page = 0;
             }
         })
         .addCase(executeQuery.rejected, (state, action) => {
@@ -110,6 +125,19 @@ const queriesReducer = createReducer(initialQueriesState, (builder) => {
         .addCase(setQuerySort, (state, action) => {
             state.list[action.payload.key].sort = action.payload.sort ?? {...defaultSort};
         })
+        .addCase(setQueryPage, (state, action) => {
+            state.list[action.payload.key].page = action.payload.page;
+        })
+        .addCase(setQueryRowsPerPage, (state, action) => {
+            const {key, rowsPerPage} = action.payload;
+            if (rowsPerPage === 0) {
+                return;
+            }
+            const firstRowIndex = state.list[key].page * state.list[key].rowsPerPage;
+            state.list[key].page = Math.floor(firstRowIndex / rowsPerPage);
+            state.list[key].rowsPerPage = rowsPerPage;
+        })
+
 });
 
 export default queriesReducer;

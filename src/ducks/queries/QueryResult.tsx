@@ -1,12 +1,19 @@
 import React, {useState} from 'react';
 import {useAppDispatch, useAppSelector} from "../../app/configureStore";
-import {selectQuerySort, selectSortedQueryResponse, setQuerySort} from "./index";
+import {
+    selectQueryPage,
+    selectQueryRowsPerPage,
+    selectQuerySort,
+    selectSortedQueryResponse, setQueryPage, setQueryRowsPerPage,
+    setQuerySort
+} from "./index";
 import QueryDuration from "./QueryDuration";
 import {Alert, SortableTable, SortableTableField, TablePagination} from "chums-components";
 import {DataRow, QueryField} from "../../types";
 import classNames from "classnames";
 import {SortProps} from "chums-types";
 import {saveAs} from 'file-saver';
+import {setPage} from "../tables";
 
 const downloadTSVHandler = (queryKey: string, data: DataRow[]) => {
     const values = data.map(row => Object.values(row).join('\t')).join('\r\n');
@@ -53,16 +60,18 @@ export default function QueryResult({queryKey}: { queryKey: string }) {
     const dispatch = useAppDispatch();
     const response = useAppSelector(state => selectSortedQueryResponse(state, queryKey));
     const sort = useAppSelector(state => selectQuerySort(state, queryKey));
-    const [page, setPage] = useState(0);
-    const [rpp, setRpp] = useState(10);
+    const page = useAppSelector(state => selectQueryPage(state, queryKey));
+    const rpp = useAppSelector(state => selectQueryRowsPerPage(state, queryKey));
 
-    const rowsPerPageChangeHandler = (rpp: number) => {
-        setPage(0);
-        setRpp(rpp);
+    const pageChangeHandler = (page:number) => {
+        dispatch(setQueryPage({key: queryKey, page}));
+    }
+
+    const rowsPerPageChangeHandler = (rowsPerPage: number) => {
+        dispatch(setQueryRowsPerPage({key: queryKey, rowsPerPage}));
     }
 
     const sortChangeHandler = (sort: SortProps<any>) => {
-        setPage(0);
         dispatch(setQuerySort({key: queryKey, sort: sort as SortProps<DataRow>}));
     }
 
@@ -95,7 +104,7 @@ export default function QueryResult({queryKey}: { queryKey: string }) {
             {!!Error && (
                 <Alert color="warning">{Error}</Alert>
             )}
-            <TablePagination page={page} onChangePage={setPage} bsSize="sm"
+            <TablePagination page={page} onChangePage={pageChangeHandler} bsSize="sm"
                              rowsPerPage={rpp} onChangeRowsPerPage={rowsPerPageChangeHandler}
                              showFirst showLast
                              count={Data.length}/>
