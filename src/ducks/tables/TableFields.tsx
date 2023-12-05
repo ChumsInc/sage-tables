@@ -28,7 +28,9 @@ const TableFields = ({columns, tableName}: Pick<TableResponse, 'columns' | 'tabl
                 MASDataTransferImplementation.php)</small></h4>
             <Snackbar open={!!message} onClose={() => setMessage(null)}
                               autoHideDuration={5000}>
-                <Alert color="info" canDismiss onDismiss={() => setMessage(null)}>Content copied to clipboard.</Alert>
+                <div>
+                    <Alert color="info" canDismiss onDismiss={() => setMessage(null)}>Content copied to clipboard.</Alert>
+                </div>
             </Snackbar>
             <code ref={ref} className="db-create-table">
                 {'{'}
@@ -38,7 +40,7 @@ const TableFields = ({columns, tableName}: Pick<TableResponse, 'columns' | 'tabl
                 "SageWhere": "",{'\n'}
                 "MysqlTable": "{tableName}",{'\n'}
                 "MysqlFields": [],{'\n'}
-                "PreExecute": [ "DELETE FROM SO_InvoiceHeader WHERE Company = '{'{COMPANY}'}'", ],{'\n'}
+                "PreExecute": [ "DELETE FROM SO_InvoiceHeader WHERE Company = '{'{COMPANY}'}'"],{'\n'}
                 "PostExecute": []{'\n'}
                 {'}'}
             </code>
