@@ -16,22 +16,33 @@ export interface CreateTableProps {
 const CreateTable = ({table, columns, primaryKeys, indexes}: CreateTableProps) => {
     const ref = useRef<HTMLElement | null>(null);
     const [message, setMessage] = useState<string | null>(null);
+    const [open, setOpen] = useState<boolean>(false);
     const [format, setFormat] = useState<SQLFormat>('MySQL');
 
-    const clickHandler = () => {
+    const clickHandler = async () => {
         if (ref.current) {
             const sql = ref.current?.innerText ?? '';
-            navigator.clipboard.writeText(sql)
-                .then(() => {
-                    setMessage('SQL copied to clipboard.');
-                })
-                .catch((err: unknown) => {
-                    if (err instanceof Error) {
-                        setMessage(err.message);
-                    }
-                })
+            try {
+                await navigator.clipboard.writeText(sql)
+                setMessage('SQL copied to clipboard');
+                setOpen(true);
+            } catch(err:unknown) {
+                if (err instanceof Error) {
+                    console.debug("clickHandler()", err.message);
+                    setMessage(err.message);
+                    setOpen(true);
+                }
+                console.debug("clickHandler()", err);
+                return Promise.reject(new Error('Error in clickHandler()'));
+            }
         }
     }
+
+    const closeHandler = () => {
+        setMessage(null);
+        setOpen(false);
+    }
+
     return (
         <div className="mb-3">
             <div className="d-flex align-items-baseline">
@@ -50,9 +61,11 @@ const CreateTable = ({table, columns, primaryKeys, indexes}: CreateTableProps) =
                     </button>
                 </div>
             </div>
-            <Snackbar open={!!message} onClose={() => setMessage(null)}
+            <Snackbar open={open} onClose={closeHandler}
                       autoHideDuration={5000}>
-                <Alert color="info" canDismiss onDismiss={() => setMessage(null)}>Content copied to clipboard.</Alert>
+                <div>
+                    <Alert color="info" canDismiss onDismiss={closeHandler}>Content copied to clipboard.</Alert>
+                </div>
             </Snackbar>
             <code className="db-create-table" ref={ref}>
                 CREATE TABLE {format === 'MySQL' && 'IF NOT EXISTS c2.'}{table} (
