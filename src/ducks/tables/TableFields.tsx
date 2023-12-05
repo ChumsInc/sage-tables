@@ -38,7 +38,7 @@ const TableFields = ({columns, tableName}: Pick<TableResponse, 'columns' | 'tabl
                 "SageWhere": "",{'\n'}
                 "MysqlTable": "{tableName}",{'\n'}
                 "MysqlFields": [],{'\n'}
-                "PreExecute": [ "DELETE FROM SO_InvoiceHeader WHERE Company = '{'{COMPANY}'}", ],{'\n'}
+                "PreExecute": [ "DELETE FROM SO_InvoiceHeader WHERE Company = '{'{COMPANY}'}'", ],{'\n'}
                 "PostExecute": []{'\n'}
                 {'}'}
             </code>
