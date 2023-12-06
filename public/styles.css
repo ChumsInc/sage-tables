@@ -55,11 +55,5 @@
 #app .query-results-container .table td.text-wrap {
   white-space: normal;
 }
-#app .query-results-container .table tbody tr:hover {
-  background-color: rgba(251, 169, 34, 0.2509803922);
-}
-#app .query-results-container .table tbody tr.selected {
-  background-color: rgba(251, 169, 34, 0.5019607843);
-}
 
 /*# sourceMappingURL=styles.css.map */

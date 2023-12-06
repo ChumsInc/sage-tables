@@ -65,12 +65,12 @@
         white-space: normal;
       }
 
-      tbody tr:hover {
-        background-color: #FBA92240;
-      }
-      tbody tr.selected {
-        background-color: #FBA92280;
-      }
+      //tbody tr:hover > * {
+      //  background-color: #FBA92240;
+      //}
+      //tbody tr.selected > * {
+      //  background-color: #FBA92280;
+      //}
     }
   }
 }

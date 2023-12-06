@@ -62,6 +62,7 @@ export default function QueryResult({queryKey}: { queryKey: string }) {
     const sort = useAppSelector(state => selectQuerySort(state, queryKey));
     const page = useAppSelector(state => selectQueryPage(state, queryKey));
     const rpp = useAppSelector(state => selectQueryRowsPerPage(state, queryKey));
+    const [selected, setSelected] = useState<number|null>(null);
 
     const pageChangeHandler = (page:number) => {
         dispatch(setQueryPage({key: queryKey, page}));
@@ -99,6 +100,9 @@ export default function QueryResult({queryKey}: { queryKey: string }) {
             </div>
             <div className="table-responsive">
                 <SortableTable fields={Fields.map(tableField)} data={Data.slice(page * rpp, page * rpp + rpp)} size="xs"
+                               className="table-hover"
+                               onSelectRow={(row) => setSelected(row._id)}
+                               selected={(row) => row._id === selected}
                                currentSort={sort} keyField="_id" onChangeSort={sortChangeHandler}/>
             </div>
             {!!Error && (
