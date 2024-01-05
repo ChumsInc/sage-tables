@@ -3,10 +3,10 @@ import TablesContainer from "../ducks/tables/TablesContainer";
 import Tabs from "../ducks/tabs/Tabs";
 import TabContent from "../ducks/tabs/TabContent";
 import {useAppDispatch} from "./configureStore";
-import {addQuery} from "../ducks/queries";
+import {addQuery} from "../ducks/queries/actions";
 import {emptyQuery, getQueryKey} from "../utils";
 import {useSelector} from "react-redux";
-import {selectCompany} from "../ducks/tables";
+import {selectCompany} from "../ducks/tables/selectors";
 import {AppVersion} from "chums-components";
 
 

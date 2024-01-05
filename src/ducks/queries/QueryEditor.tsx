@@ -1,41 +1,43 @@
-import React, {ChangeEvent, KeyboardEvent} from 'react';
-import {executeQuery, selectQuery, updateQuery} from "./index";
+import React, {ChangeEvent, KeyboardEvent, useEffect, useRef, useState} from 'react';
+import {executeQuery, updateQuery} from "./actions";
 import {useAppDispatch, useAppSelector} from "../../app/configureStore";
 import CompanySelect from "./CompanySelect";
 import {CompanyCode, Query} from "../../types";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
 import {SpinnerButton} from "chums-components";
-
+import {selectQuery} from "./selectors";
+import SaveQueryButton from "./SaveQueryButton";
+import LoadQueryButton from "./LoadQueryButton";
+import SQLEditor from "./SQLEditor";
 
 
 const QueryEditor = ({queryKey}: { queryKey: string }) => {
     const dispatch = useAppDispatch();
     const query = useAppSelector(state => selectQuery(state, queryKey));
 
-
     const queryChangeHandler = (field: keyof Pick<Query, 'company' | 'limit' | 'offset' | 'sql'>) =>
         (ev: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
             switch (field) {
-            case 'limit':
-            case 'offset':
-                dispatch(updateQuery({key: queryKey, [field]: +ev.target.value}));
-                return
-            case 'company':
-                dispatch(updateQuery({key: queryKey, [field]: ev.target.value as CompanyCode}));
-                return;
-            case 'sql':
-                dispatch(updateQuery({key: queryKey, [field]: ev.target.value}));
+                case 'limit':
+                case 'offset':
+                    dispatch(updateQuery({key: queryKey, [field]: +ev.target.value}));
+                    return
+                case 'company':
+                    dispatch(updateQuery({key: queryKey, [field]: ev.target.value as CompanyCode}));
+                    return;
             }
         }
 
-    const keyHandler = (ev: KeyboardEvent) => {
-        if (ev.ctrlKey && (ev.code === 'Enter' || ev.code === 'NumpadEnter')) {
-            dispatch(executeQuery(query));
-        }
+    const submitHandler = () => {
+        dispatch(executeQuery(queryKey));
     }
 
-    const submitHandler = () => {
-        dispatch(executeQuery(query));
+    const editorChangeHandler = (sql?:string) => {
+        dispatch(updateQuery({key: queryKey, sql}));
+    }
+    const editorSubmitHandler = async (sql:string) => {
+        await editorChangeHandler(sql);
+        await dispatch(executeQuery(queryKey))
     }
 
     return (
@@ -70,12 +72,15 @@ const QueryEditor = ({queryKey}: { queryKey: string }) => {
                         Submit
                     </SpinnerButton>
                 </div>
+                <div className="col-auto">
+                    <SaveQueryButton queryKey={queryKey}/>
+                </div>
+                <div className="col-auto">
+                    <LoadQueryButton queryKey={queryKey}/>
+                </div>
                 <div className="col"/>
             </div>
-            <TextareaAutosize value={query.sql} onChange={queryChangeHandler('sql')} spellCheck={false}
-                              disabled={query.status === 'pending'}
-                              onKeyDown={keyHandler}
-                              className="form-control form-control-sm font-monospace" minRows={3} maxRows={10}/>
+            <SQLEditor sql={query.sql} onChange={editorChangeHandler} onExecute={editorSubmitHandler} readonly={query.status === 'pending'} />
         </div>
     )
 }

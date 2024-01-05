@@ -16,11 +16,14 @@ export interface Query {
     sort:SortProps<DataRow>;
     page: number;
     rowsPerPage: number;
+    filename?: string;
 }
 
 export type QueryChangeProps = Partial<Query> & Pick<Query, 'key'> ;
 export type QueryPageProps = Pick<Query, 'key'|'page'>;
 export type QueryRowsPerPageProps = Pick<Query, 'key'|'rowsPerPage'>;
+
+export type SavedQuery = Pick<Query, 'company'|'sql'|'filename'>;
 
 export type FieldType = 'VARCHAR'|'DECIMAL'|'DATE'|'LONGVARCHAR';
 
@@ -116,4 +119,15 @@ export type CompanyCode = 'CHI'|'TST';
 export interface CompanyServer {
     server: ServerName;
     company: CompanyCode;
+}
+
+export interface DBTableSettings {
+    SageCompanies: string[];
+    SageTable: string;
+    SageFields: string[];
+    SageWhere: string;
+    MysqlTable: string;
+    MysqlFields: string[];
+    PreExecute: string[];
+    PostExecute: string[];
 }

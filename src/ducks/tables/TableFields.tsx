@@ -1,8 +1,20 @@
 import React, {useRef, useState} from "react";
-import {TableResponse} from "../../types";
+import {DBTableSettings, TableColumn, TableResponse} from "../../types";
 import Snackbar from "@mui/material/Snackbar";
 import {Alert} from "chums-components";
 
+const dbCreateTable = (tableName: string, sageFields: TableColumn[]):DBTableSettings => {
+    return {
+        SageCompanies: ['CHI'],
+        SageTable: tableName,
+        SageFields: sageFields.map(field => field.COLUMN_NAME),
+        SageWhere: '',
+        MysqlTable: tableName,
+        MysqlFields: [],
+        PreExecute: [`DELETE FROM ${tableName} WHERE Company = '{COMPANY}'`],
+        PostExecute: [],
+    }
+}
 
 const TableFields = ({columns, tableName}: Pick<TableResponse, 'columns' | 'tableName'>) => {
     const ref = useRef<HTMLElement | null>(null);
@@ -33,16 +45,7 @@ const TableFields = ({columns, tableName}: Pick<TableResponse, 'columns' | 'tabl
                 </div>
             </Snackbar>
             <code ref={ref} className="db-create-table">
-                {'{'}
-                "SageCompanies": ["CHI"],{'\n'}
-                "SageTable": "{tableName}",{'\n'}
-                "SageFields": [{columns.map(field => `"${field.COLUMN_NAME}"`).join(', ')}],{'\n'}
-                "SageWhere": "",{'\n'}
-                "MysqlTable": "{tableName}",{'\n'}
-                "MysqlFields": [],{'\n'}
-                "PreExecute": [ "DELETE FROM {tableName} WHERE Company = '{'{COMPANY}'}'"],{'\n'}
-                "PostExecute": []{'\n'}
-                {'}'}
+                {JSON.stringify(dbCreateTable(tableName, columns), undefined, 2)}
             </code>
         </div>
     )

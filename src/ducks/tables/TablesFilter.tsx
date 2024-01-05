@@ -3,19 +3,12 @@ import {useSelector} from "react-redux";
 
 import {SpinnerButton} from "chums-components";
 import {useAppDispatch} from "../../app/configureStore";
-import {
-    loadTables,
-    selectCompany,
-    selectFilter,
-    selectLoading,
-    selectServer,
-    setCompany,
-    setFilter,
-    setServer
-} from "./index";
+import {loadTables, setCompany, setFilter, setServer} from "./actions";
+import {selectCompany, selectFilter, selectLoading, selectServer,} from './selectors'
 import {CompanyCode, ServerName} from "../../types";
+import {Button, LinearProgress} from "@mui/material";
 
-const TablesFilter:React.FC = () => {
+const TablesFilter: React.FC = () => {
     const dispatch = useAppDispatch();
     const server = useSelector(selectServer);
     const company = useSelector(selectCompany);
@@ -30,11 +23,11 @@ const TablesFilter:React.FC = () => {
         dispatch(loadTables())
     }, [server, company])
 
-    const handleServerChange = (ev:ChangeEvent<HTMLSelectElement>) => {
+    const handleServerChange = (ev: ChangeEvent<HTMLSelectElement>) => {
         dispatch(setServer(ev.target.value as ServerName));
     }
 
-    const handleCompanyChange = (ev:ChangeEvent<HTMLSelectElement>) => {
+    const handleCompanyChange = (ev: ChangeEvent<HTMLSelectElement>) => {
         dispatch(setCompany(ev.target.value as CompanyCode));
     }
 
@@ -42,7 +35,7 @@ const TablesFilter:React.FC = () => {
         dispatch(loadTables())
     }
 
-    const handleFilterChange = (ev:ChangeEvent<HTMLInputElement>) => {
+    const handleFilterChange = (ev: ChangeEvent<HTMLInputElement>) => {
         dispatch(setFilter(ev.target.value));
     }
     return (
@@ -59,13 +52,14 @@ const TablesFilter:React.FC = () => {
                     <option value="SUH">SUH</option>
                     <option value="CAL">CAL</option>
                 </select>
-                <SpinnerButton type="button" color="primary" spinning={loading} onClick={onReload}>Reload</SpinnerButton>
+                <button type="button" className="btn btn-sm btn-primary" onClick={onReload}>Reload</button>
             </div>
+            {loading && <LinearProgress variant="indeterminate" />}
             <div className="mt-1">
                 <div className="input-group input-group-sm">
-                    <div className="input-group-text"><span className="bi-funnel-fill" /></div>
+                    <div className="input-group-text"><span className="bi-funnel-fill"/></div>
                     <input type="search" className="form-control form-control-sm"
-                           value={filter} onChange={handleFilterChange} placeholder="Filter" />
+                           value={filter} onChange={handleFilterChange} placeholder="Filter"/>
                 </div>
             </div>
         </div>

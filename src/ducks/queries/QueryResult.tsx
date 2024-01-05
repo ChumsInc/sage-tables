@@ -4,16 +4,15 @@ import {
     selectQueryPage,
     selectQueryRowsPerPage,
     selectQuerySort,
-    selectSortedQueryResponse, setQueryPage, setQueryRowsPerPage,
-    setQuerySort
-} from "./index";
+    selectSortedQueryResponse
+} from "./selectors";
 import QueryDuration from "./QueryDuration";
 import {Alert, SortableTable, SortableTableField, TablePagination} from "chums-components";
 import {DataRow, QueryField} from "../../types";
 import classNames from "classnames";
 import {SortProps} from "chums-types";
 import {saveAs} from 'file-saver';
-import {setPage} from "../tables";
+import {setQueryPage, setQueryRowsPerPage, setQuerySort} from "./actions";
 
 const downloadTSVHandler = (queryKey: string, data: DataRow[]) => {
     const values = data.map(row => Object.values(row).join('\t')).join('\r\n');
@@ -30,12 +29,12 @@ const downloadJSONHandler = (queryKey: string, data: DataRow[]) => {
 
 const renderedField = ({field, row}: { field: QueryField, row: DataRow }) => {
     switch (field.FieldType) {
-    case 'DATE':
-        return row[field.Name] === null
-            ? '∅'
-            : row[field.Name];
-    default:
-        return row[field.Name] ?? '∅';
+        case 'DATE':
+            return row[field.Name] === null
+                ? '∅'
+                : row[field.Name];
+        default:
+            return row[field.Name] ?? '∅';
     }
 }
 const tableField = (field: QueryField): SortableTableField => {
@@ -64,7 +63,7 @@ export default function QueryResult({queryKey}: { queryKey: string }) {
     const rpp = useAppSelector(state => selectQueryRowsPerPage(state, queryKey));
     const [selected, setSelected] = useState<number|null>(null);
 
-    const pageChangeHandler = (page:number) => {
+    const pageChangeHandler = (page: number) => {
         dispatch(setQueryPage({key: queryKey, page}));
     }
 
