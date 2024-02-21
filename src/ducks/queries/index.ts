@@ -54,6 +54,7 @@ const queriesReducer = createReducer(initialQueriesState, (builder) => {
         })
         .addCase(executeQuery.pending, (state, action) => {
             state.list[action.meta.arg].status = 'pending';
+            state.list[action.meta.arg].error = undefined;
         })
         .addCase(executeQuery.fulfilled, (state, action) => {
             const key = action.meta.arg;
@@ -61,10 +62,12 @@ const queriesReducer = createReducer(initialQueriesState, (builder) => {
                 state.list[key].status = 'fulfilled';
                 state.list[key].response = action.payload;
                 state.list[key].page = 0;
+                state.list[key].error = undefined;
             }
         })
         .addCase(executeQuery.rejected, (state, action) => {
             state.list[action.meta.arg].status = 'rejected';
+            state.list[action.meta.arg].error = action.error.message;
         })
         .addCase(setQuerySort, (state, action) => {
             state.list[action.payload.key].sort = action.payload.sort ?? {...defaultSort};

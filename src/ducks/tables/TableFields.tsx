@@ -36,8 +36,9 @@ const TableFields = ({columns, tableName}: Pick<TableResponse, 'columns' | 'tabl
     }
     return (
         <div className="mb-3">
-            <h4 onClick={clickHandler} style={{cursor: 'pointer'}}>Fields <small>(for
-                MASDataTransferImplementation.php)</small></h4>
+            <h4 onClick={clickHandler} style={{cursor: 'pointer'}}>
+                Fields <small className="ms-1">(for MASDataTransferImplementation.php)</small>
+            </h4>
             <Snackbar open={!!message} onClose={() => setMessage(null)}
                               autoHideDuration={5000}>
                 <div>

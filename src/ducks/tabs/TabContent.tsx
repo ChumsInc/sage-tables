@@ -5,6 +5,7 @@ import ErrorBoundary from "../../common-components/ErrorBoundary";
 import TableDetail from "../tables/TableDetail";
 import QueryEditor from "../queries/QueryEditor";
 import QueryResult from "../queries/QueryResult";
+import QueryErrorAlert from "../queries/QueryErrorAlert";
 
 
 const TabContent = () => {
@@ -26,6 +27,7 @@ const TabContent = () => {
             return (
                 <ErrorBoundary>
                     <QueryEditor queryKey={currentTabKey}/>
+                    <QueryErrorAlert queryKey={currentTabKey} />
                     <QueryResult queryKey={currentTabKey}/>
                 </ErrorBoundary>
             );

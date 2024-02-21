@@ -13,7 +13,7 @@ export const selectQueryRowsPerPage = (state:RootState, key:string) => state.que
 export const selectQueryResponseFields = (state: RootState, key: string) => state.queries.list[key].response?.Fields ?? [];
 export const selectQueryResponseData = (state: RootState, key: string) => state.queries.list[key].response?.Data ?? [];
 export const selectQueryResponseQuery = (state: RootState, key: string) => state.queries.list[key].response?.Query ?? '';
-export const selectQueryResponseError = (state: RootState, key: string) => state.queries.list[key].response?.Error ?? '';
+export const selectQueryResponseError = (state: RootState, key: string) => state.queries.list[key].error ?? '';
 export const selectQueryResponseTimings = (state: RootState, key: string) => state.queries.list[key].response?.timings ?? null;
 export const selectQueryResponseCompany = (state: RootState, key: string) => state.queries.list[key].response?.Company ?? '';
 

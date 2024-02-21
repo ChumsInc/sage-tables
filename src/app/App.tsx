@@ -8,6 +8,8 @@ import {emptyQuery, getQueryKey} from "../utils";
 import {useSelector} from "react-redux";
 import {selectCompany} from "../ducks/tables/selectors";
 import {AppVersion} from "chums-components";
+import {ErrorBoundary as ReactErrorBoundary} from 'react-error-boundary';
+import ErrorFallback from "./ErrorFallback";
 
 
 const App = () => {
@@ -23,16 +25,19 @@ const App = () => {
     }, []);
 
     return (
-        <div className="row g-3">
-            <div className="col-auto" style={{minWidth: '350px', maxWidth: '350px'}}>
-                <TablesContainer />
-                <AppVersion />
+        <ReactErrorBoundary FallbackComponent={ErrorFallback}>
+            <div className="row g-3">
+                <div className="col-auto" style={{minWidth: '350px', maxWidth: '350px'}}>
+                    <TablesContainer/>
+                    <AppVersion/>
+                </div>
+                <div className="col" style={{minWidth: 'calc(100% - 350px - var(--bs-gutter-x))'}}>
+                    <Tabs/>
+                    <TabContent/>
+                </div>
             </div>
-            <div className="col" style={{minWidth: 'calc(100% - 350px - var(--bs-gutter-x))'}}>
-                <Tabs />
-                <TabContent />
-            </div>
-        </div>
+
+        </ReactErrorBoundary>
     )
 }
 

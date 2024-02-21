@@ -14,29 +14,35 @@ import SQLEditor from "./SQLEditor";
 const QueryEditor = ({queryKey}: { queryKey: string }) => {
     const dispatch = useAppDispatch();
     const query = useAppSelector(state => selectQuery(state, queryKey));
+    const [key, setKey] = useState<string>(queryKey);
+
+    useEffect(() => {
+        setKey(queryKey);
+    }, [queryKey]);
 
     const queryChangeHandler = (field: keyof Pick<Query, 'company' | 'limit' | 'offset' | 'sql'>) =>
         (ev: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
             switch (field) {
                 case 'limit':
                 case 'offset':
-                    dispatch(updateQuery({key: queryKey, [field]: +ev.target.value}));
+                    dispatch(updateQuery({key, [field]: +ev.target.value}));
                     return
                 case 'company':
-                    dispatch(updateQuery({key: queryKey, [field]: ev.target.value as CompanyCode}));
+                    dispatch(updateQuery({key, [field]: ev.target.value as CompanyCode}));
                     return;
             }
         }
 
-    const submitHandler = () => {
-        dispatch(executeQuery(queryKey));
+    const submitHandler = async () => {
+        await dispatch(executeQuery(key));
     }
 
-    const editorChangeHandler = (sql?:string) => {
-        dispatch(updateQuery({key: queryKey, sql}));
+    const editorChangeHandler = async (sql?:string) => {
+        dispatch(updateQuery({key, sql}));
     }
-    const editorSubmitHandler = async (sql:string) => {
-        await editorChangeHandler(sql);
+    const editorSubmitHandler = async (sql:string, queryKey: string) => {
+        console.log('editorSubmitHandler', queryKey, sql);
+        dispatch(updateQuery({key: queryKey, sql}));
         await dispatch(executeQuery(queryKey))
     }
 
@@ -73,14 +79,14 @@ const QueryEditor = ({queryKey}: { queryKey: string }) => {
                     </SpinnerButton>
                 </div>
                 <div className="col-auto">
-                    <SaveQueryButton queryKey={queryKey}/>
+                    <SaveQueryButton queryKey={key}/>
                 </div>
                 <div className="col-auto">
-                    <LoadQueryButton queryKey={queryKey}/>
+                    <LoadQueryButton queryKey={key}/>
                 </div>
-                <div className="col"/>
+                <div className="col">{key}</div>
             </div>
-            <SQLEditor sql={query.sql} onChange={editorChangeHandler} onExecute={editorSubmitHandler} readonly={query.status === 'pending'} />
+            <SQLEditor queryKey={queryKey} sql={query.sql} onChange={editorChangeHandler} onExecute={editorSubmitHandler} readonly={query.status === 'pending'} />
         </div>
     )
 }
