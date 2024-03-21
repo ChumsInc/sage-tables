@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Editor, {useMonaco} from '@monaco-editor/react';
 import {IDisposable} from 'monaco-editor'
+import {useMediaQuery} from "@mui/material";
 
 
 export interface SQLEditorProps {
@@ -14,6 +15,11 @@ export interface SQLEditorProps {
 const SQLEditor = ({queryKey, sql, readonly, onChange, onExecute}: SQLEditorProps) => {
     const monaco = useMonaco();
     const [action, setAction] = useState<IDisposable|null>(null);
+    const [theme, setTheme] = useState<string>('vs');
+    const matches = useMediaQuery('(prefers-color-scheme: dark)');
+    useEffect(() => {
+        setTheme(matches ? 'vs-dark' : 'vs')
+    },[matches])
     useEffect(() => {
         if (monaco) {
             const action = monaco.editor.addEditorAction({
@@ -34,7 +40,7 @@ const SQLEditor = ({queryKey, sql, readonly, onChange, onExecute}: SQLEditorProp
         }
     }, [monaco, queryKey]);
     return (
-        <Editor onChange={onChange} value={sql} height="30vh" defaultLanguage="sql"/>
+        <Editor onChange={onChange} value={sql} height="30vh" defaultLanguage="sql" theme={theme}/>
     )
 }
 

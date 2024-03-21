@@ -3,3 +3,5 @@
 /public/**/.sass-cache/
 /public/js/
 /.idea
+/public/**/*.css.map
+/public/**/*.css

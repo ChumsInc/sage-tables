@@ -43,9 +43,6 @@
 #app .query-results-container .table td.text-date {
   color: #198844;
 }
-#app .query-results-container .table td.text-varchar {
-  color: #282a2e;
-}
 #app .query-results-container .table td.text-decimal {
   color: #F96A38;
 }
