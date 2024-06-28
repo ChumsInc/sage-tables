@@ -9,7 +9,7 @@ const SaveQueryButton = ({queryKey}: { queryKey: string }) => {
     const dispatch = useAppDispatch();
     const query = useAppSelector(state => selectQuery(state, queryKey));
     const [open, setOpen] = useState(false);
-    const [filename, setFilename] = useState(query.filename ?? '');
+    const [filename, setFilename] = useState(query?.filename ?? '');
 
     const saveHandler = () => {
         setOpen(true);
@@ -20,6 +20,9 @@ const SaveQueryButton = ({queryKey}: { queryKey: string }) => {
     }
 
     const handleSave = () => {
+        if (!query) {
+            return;
+        }
         dispatch(saveQuery({...query, filename}));
         setOpen(false);
     }
@@ -27,8 +30,8 @@ const SaveQueryButton = ({queryKey}: { queryKey: string }) => {
     return (
         <>
             <button type="button" className={classNames("btn btn-sm", {
-                'btn-warning': query.changed,
-                'btn-outline-primary': !query.changed
+                'btn-warning': query?.changed,
+                'btn-outline-primary': !query?.changed
             })} onClick={saveHandler}>
                 Save
             </button>

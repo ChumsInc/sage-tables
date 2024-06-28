@@ -50,15 +50,15 @@ const QueryEditor = ({queryKey}: { queryKey: string }) => {
         <div>
             <div className="row g-3 mb-1">
                 <div className="col-auto">
-                    <CompanySelect value={query.company} onChange={queryChangeHandler('company')}/>
+                    <CompanySelect value={query?.company ?? 'CHI'} onChange={queryChangeHandler('company')}/>
                 </div>
                 <div className="col-auto">
                     <div className="input-group input-group-sm">
                         <div className="input-group-text">
                             Offset
                         </div>
-                        <input type="number" value={query.offset} onChange={queryChangeHandler('offset')}
-                               min={0} step={query.limit}
+                        <input type="number" value={query?.offset ?? 0} onChange={queryChangeHandler('offset')}
+                               min={0} step={query?.limit ?? 0}
                                className="form-control form-control-sm"/>
                     </div>
                 </div>
@@ -67,13 +67,13 @@ const QueryEditor = ({queryKey}: { queryKey: string }) => {
                         <div className="input-group-text">
                             Limit
                         </div>
-                        <input type="number" value={query.limit} onChange={queryChangeHandler('limit')}
+                        <input type="number" value={query?.limit ?? 100} onChange={queryChangeHandler('limit')}
                                className="form-control form-control-sm"/>
                     </div>
                 </div>
                 <div className="col-auto">
                     <SpinnerButton type="button" size="sm" color="primary"
-                                   spinning={query.status === 'pending'}
+                                   spinning={query?.status === 'pending'}
                                    onClick={submitHandler}>
                         Submit
                     </SpinnerButton>
@@ -86,7 +86,8 @@ const QueryEditor = ({queryKey}: { queryKey: string }) => {
                 </div>
                 <div className="col">{key}</div>
             </div>
-            <SQLEditor queryKey={queryKey} sql={query.sql} onChange={editorChangeHandler} onExecute={editorSubmitHandler} readonly={query.status === 'pending'} />
+            <SQLEditor queryKey={queryKey} sql={query?.sql ?? ''} onChange={editorChangeHandler}
+                       onExecute={editorSubmitHandler} readonly={query?.status === 'pending'} />
         </div>
     )
 }

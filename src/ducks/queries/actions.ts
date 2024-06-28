@@ -12,18 +12,18 @@ export const setQueryRowsPerPage = createAction<QueryRowsPerPageProps>('queries/
 
 
 export const addQuery = createAction<Query>('queries/addQuery');
-export const executeQuery = createAsyncThunk<QueryResponse, string>(
+export const executeQuery = createAsyncThunk<QueryResponse|null, string>(
     'queries/execute',
     async (arg, {getState}) => {
         const state = getState() as RootState;
         const query = selectQuery(state, arg);
-        return await execQuery(query)
+        return await execQuery(query!)
     },
     {
         condition: (arg, {getState}) => {
             const state = getState() as RootState;
             const query = selectQuery(state, arg);
-            return !!query.sql && query.status !== 'pending';
+            return !!query && !!query.sql && query.status !== 'pending';
         }
     }
 )

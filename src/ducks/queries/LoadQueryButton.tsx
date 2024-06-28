@@ -48,6 +48,9 @@ const LoadQueryButton = ({queryKey}: { queryKey: string }) => {
 
     const closeHandler = () => setOpen(false);
 
+    if (!query) {
+        return;
+    }
     return (
         <>
             <button type="button" className="btn btn-sm btn-outline-primary" onClick={() => setOpen(true)}>

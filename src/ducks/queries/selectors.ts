@@ -2,9 +2,13 @@ import {RootState} from "../../app/configureStore";
 import {createSelector} from "@reduxjs/toolkit";
 import {selectCurrentTab} from "../tabs/selectors";
 import {dataSorter} from "./utils";
+import {Query} from "../../types";
+import {Root} from "react-dom/client";
+import {Editable} from "chums-types";
 
 export const selectQueryList = (state:RootState) => state.queries.list;
-export const selectQuery = (state: RootState, key: string) => state.queries.list[key];
+export const selectQuery = (state: RootState, key: string):(Query & Editable)|null => state.queries.list[key] ?? null;
+// export const selectQueryKey = (state:Root, key:string) => key;
 export const selectQuerySort = (state: RootState, key: string) => state.queries.list[key].sort;
 export const selectQueryLoading = (state: RootState, key: string) => state.queries.list[key].status === 'pending';
 export const selectQueryResponse = (state: RootState, key: string) => state.queries.list[key].response;
@@ -17,6 +21,10 @@ export const selectQueryResponseError = (state: RootState, key: string) => state
 export const selectQueryResponseTimings = (state: RootState, key: string) => state.queries.list[key].response?.timings ?? null;
 export const selectQueryResponseCompany = (state: RootState, key: string) => state.queries.list[key].response?.Company ?? '';
 
+// export const selectQuery = createSelector(
+//     [selectQueryList, selectQueryResponseQuery],
+//     (list, key) => list[key] ?? null
+// )
 export const selectCurrentQuery = createSelector(
     [selectQueryList, selectCurrentTab],
     (list, tab) => {
@@ -37,3 +45,4 @@ export const selectSortedQueryResponse = createSelector(
             Data: sorted,
         }
     })
+
