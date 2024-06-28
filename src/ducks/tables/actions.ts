@@ -27,7 +27,7 @@ export const loadTables = createAsyncThunk<string[]>(
     }
 )
 
-export const loadTable = createAsyncThunk<TableResponse, string>(
+export const loadTable = createAsyncThunk<TableResponse|null, string>(
     'list/loadTable',
     async (arg, {getState}) => {
         const state = getState() as RootState;

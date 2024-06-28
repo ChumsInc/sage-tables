@@ -1,7 +1,7 @@
 import {Query, QueryResponse} from "../types";
 import {fetchJSON} from "chums-components";
 
-export async function execQuery(arg:Query):Promise<QueryResponse> {
+export async function execQuery(arg:Query):Promise<QueryResponse|null> {
     try {
         const url = '/node-sage/api/:company/query/:limit/:offset'
             .replace(':company', encodeURIComponent(arg.company))
@@ -16,10 +16,10 @@ export async function execQuery(arg:Query):Promise<QueryResponse> {
                 offset: arg.offset,
             })
         });
-        if (res.Data) {
+        if (res?.Data) {
             res.Data = res.Data.map((row, index) => ({...row, _id: index}));
         }
-        return res;
+        return res ?? null;
     } catch(err:unknown) {
         if (err instanceof Error) {
             console.debug("execQuery()", err.message);

@@ -67,7 +67,9 @@ const tablesReducer = createReducer(initialTablesState, (builder) => {
             state.tableDetail[(action.meta.arg)].loading = true;
         })
         .addCase(loadTable.fulfilled, (state, action) => {
-            state.tableDetail[(action.meta.arg)] = action.payload;
+            if (action.payload) {
+                state.tableDetail[(action.meta.arg)] = action.payload;
+            }
         })
         .addCase(loadTable.rejected, (state, action) => {
             if (!state.tableDetail[(action.meta.arg)]) {

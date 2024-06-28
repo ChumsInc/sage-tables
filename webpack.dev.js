@@ -4,11 +4,7 @@ const common = require('./webpack.common.js');
 const path = require('node:path');
 
 const localProxy = {
-    target: {
-        host: 'localhost',
-        protocol: 'http:',
-        port: 8081
-    },
+    target: 'http://localhost:8081',
     ignorePath: false,
     changeOrigin: true,
     secure: false,
@@ -23,15 +19,9 @@ module.exports = merge(common, {
             {directory: process.cwd(), watch: false}
         ],
         hot: true,
-        proxy: {
-            '/arches': {...localProxy},
-            '/api': {...localProxy},
-            '/images/': {...localProxy},
-            '/node-dev/': {...localProxy},
-            '/node-sage/': {...localProxy},
-            '/sage/': {...localProxy},
-            '/version': {...localProxy},
-        },
+        proxy: [
+            {context: ['/arches', '/api', '/images', '/node-sage'], ...localProxy }
+        ],
         watchFiles: 'src/**/*',
     },
     devtool: 'eval-source-map',

@@ -4,8 +4,8 @@ import {CompanyCode, CompanyServer, QueryResponse, ServerName, TableResponse} fr
 export async function fetchTables(arg:CompanyServer):Promise<string[]> {
     try {
         const url = `/arches/api/sage-tables.php`;
-        const {tables} = await fetchJSON<{tables: string[] }>(url, {credentials: 'same-origin'});
-        return tables;
+        const res = await fetchJSON<{tables: string[] }>(url, {credentials: 'same-origin'});
+        return res?.tables ?? [];
     } catch(err:unknown) {
         if (err instanceof Error) {
             console.debug("fetchTables()", err.message);
@@ -16,7 +16,7 @@ export async function fetchTables(arg:CompanyServer):Promise<string[]> {
     }
 }
 
-export async function fetchTable(company:CompanyServer, table:string):Promise<TableResponse> {
+export async function fetchTable(company:CompanyServer, table:string):Promise<TableResponse|null> {
     try {
         const url = `/arches/api/sage-tables.php`;
         const query = new URLSearchParams();
@@ -32,7 +32,7 @@ export async function fetchTable(company:CompanyServer, table:string):Promise<Ta
     }
 }
 
-export async function fetchResult(company:string, sql:string, limit: number, offset: number):Promise<QueryResponse> {
+export async function fetchResult(company:string, sql:string, limit: number, offset: number):Promise<QueryResponse|null> {
     try {
         const url = `/node-sage/api/CHI/query/${encodeURIComponent(limit)}/${encodeURIComponent(offset)}`;
         const body = JSON.stringify({company, limit, offset, query: sql});
