@@ -39,8 +39,7 @@ const TablesList: React.FC = () => {
     }
 
     const onAddQuery = (table: string) => {
-        const sql = `SELECT *
-                     FROM ${table}`;
+        const sql = `SELECT * \nFROM ${table}`;
         if (currentQuery && currentQuery.sql === '') {
             dispatch(updateQuery({key: currentQuery.key, sql}));
             return;
