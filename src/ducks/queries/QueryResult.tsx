@@ -97,6 +97,7 @@ export default function QueryResult({queryKey}: { queryKey: string }) {
                     Download JSON
                 </button>
             </div>
+
             <div className="table-responsive">
                 <SortableTable fields={Fields.map(tableField)} data={Data.slice(page * rpp, page * rpp + rpp)} size="xs"
                                className="table-hover"

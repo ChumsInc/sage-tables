@@ -62,7 +62,7 @@ const queriesReducer = createReducer(initialQueriesState, (builder) => {
                 state.list[key].status = 'fulfilled';
                 state.list[key].response = action.payload;
                 state.list[key].page = 0;
-                state.list[key].error = undefined;
+                state.list[key].error = action.payload?.Error ?? null;
             }
         })
         .addCase(executeQuery.rejected, (state, action) => {

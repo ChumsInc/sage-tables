@@ -17,7 +17,7 @@ export interface Query {
     page: number;
     rowsPerPage: number;
     filename?: string;
-    error?: string;
+    error?: string|null;
 }
 
 export type QueryChangeProps = Partial<Query> & Pick<Query, 'key'> ;
