@@ -1,14 +1,15 @@
-import {CompanyCode, DataRow, Query, TableResponse} from "./types";
-import {SortProps} from "chums-components";
+import type {CompanyCode, DataRow, Query, TableResponse} from "./types";
+import type {SortProps} from "chums-types";
 
-export const noop = () => {};
+export const noop = () => {
+};
 export const now = () => new Date().valueOf();
 
 export const getQueryKey = () => now().toString(36);
 
-export const defaultSort:SortProps<DataRow> = {field: "_id", ascending: true};
+export const defaultSort: SortProps<DataRow> = {field: "_id", ascending: true};
 
-export const emptyQuery = (company:CompanyCode):Query => ({
+export const emptyQuery = (company: CompanyCode): Query => ({
     key: '',
     company,
     limit: 100,
@@ -24,10 +25,10 @@ export const emptyQuery = (company:CompanyCode):Query => ({
 });
 
 
-export function isQuery(value: Query|TableResponse):value is Query {
+export function isQuery(value: Query | TableResponse): value is Query {
     return (value as Query).sql !== undefined;
 }
 
-export function isTableResponse(value:Query|TableResponse):value is TableResponse {
+export function isTableResponse(value: Query | TableResponse): value is TableResponse {
     return (value as TableResponse).tableName !== undefined;
 }

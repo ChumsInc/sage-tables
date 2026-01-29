@@ -1,14 +1,12 @@
-import React, {ChangeEvent, useEffect} from 'react';
+import {type ChangeEvent, useEffect} from 'react';
 import {useSelector} from "react-redux";
-
-import {SpinnerButton} from "chums-components";
 import {useAppDispatch} from "../../app/configureStore";
 import {loadTables, setCompany, setFilter, setServer} from "./actions";
 import {selectCompany, selectFilter, selectLoading, selectServer,} from './selectors'
-import {CompanyCode, ServerName} from "../../types";
-import {Button, LinearProgress} from "@mui/material";
+import type {CompanyCode, ServerName} from "../../types";
+import {ProgressBar} from "react-bootstrap";
 
-const TablesFilter: React.FC = () => {
+const TablesFilter = () => {
     const dispatch = useAppDispatch();
     const server = useSelector(selectServer);
     const company = useSelector(selectCompany);
@@ -54,7 +52,7 @@ const TablesFilter: React.FC = () => {
                 </select>
                 <button type="button" className="btn btn-sm btn-primary" onClick={onReload}>Reload</button>
             </div>
-            {loading && <LinearProgress variant="indeterminate" />}
+            {loading && <ProgressBar now={100} animated className="mt-1" label="Loading..."/>}
             <div className="mt-1">
                 <div className="input-group input-group-sm">
                     <div className="input-group-text"><span className="bi-funnel-fill"/></div>

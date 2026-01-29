@@ -5,3 +5,4 @@
 /.idea
 /public/**/*.css.map
 /public/**/*.css
+/dist

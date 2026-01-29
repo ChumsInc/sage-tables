@@ -1,9 +1,8 @@
-import React, {useRef, useState} from "react";
-import {DBTableSettings, TableColumn, TableResponse} from "../../types";
-import Snackbar from "@mui/material/Snackbar";
-import {Alert} from "chums-components";
+import {useRef, useState} from "react";
+import type {DBTableSettings, TableColumn, TableResponse} from "../../types";
+import {Toast, ToastContainer} from "react-bootstrap";
 
-const dbCreateTable = (tableName: string, sageFields: TableColumn[]):DBTableSettings => {
+const dbCreateTable = (tableName: string, sageFields: TableColumn[]): DBTableSettings => {
     return {
         SageCompanies: ['CHI'],
         SageTable: tableName,
@@ -11,7 +10,9 @@ const dbCreateTable = (tableName: string, sageFields: TableColumn[]):DBTableSett
         SageWhere: '',
         MysqlTable: tableName,
         MysqlFields: [],
-        PreExecute: [`DELETE FROM ${tableName} WHERE Company = '{COMPANY}'`],
+        PreExecute: [`DELETE
+                      FROM ${tableName}
+                      WHERE Company = '{COMPANY}'`],
         PostExecute: [],
     }
 }
@@ -39,12 +40,14 @@ const TableFields = ({columns, tableName}: Pick<TableResponse, 'columns' | 'tabl
             <h4 onClick={clickHandler} style={{cursor: 'pointer'}}>
                 Fields <small className="ms-1">(for MASDataTransferImplementation.php)</small>
             </h4>
-            <Snackbar open={!!message} onClose={() => setMessage(null)}
-                              autoHideDuration={5000}>
-                <div>
-                    <Alert color="info" canDismiss onDismiss={() => setMessage(null)}>Content copied to clipboard.</Alert>
-                </div>
-            </Snackbar>
+            <ToastContainer className="position-fixed bottom-0 start-0 p-3">
+                <Toast show={!!message} onClose={() => setMessage(null)} autohide delay={5000} bg="info">
+                    <Toast.Header>
+                        <div>{tableName} Fields</div>
+                    </Toast.Header>
+                    <Toast.Body>Content copied to clipboard.</Toast.Body>
+                </Toast>
+            </ToastContainer>
             <code ref={ref} className="db-create-table">
                 {JSON.stringify(dbCreateTable(tableName, columns), undefined, 2)}
             </code>

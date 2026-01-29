@@ -1,8 +1,8 @@
-import {TabList} from "../../types";
+import type {TabList} from "../../types";
 import {createReducer} from "@reduxjs/toolkit";
 import {loadTable} from "../tables/actions";
-import {addQuery, loadQuery} from "../queries/actions";
 import {addTab, closeTab, setTab} from "./actions";
+import {addQuery} from "@/ducks/queries";
 
 export interface TabsState {
     list: TabList;
@@ -13,7 +13,6 @@ const initialState: TabsState = {
     list: {},
     currentTab: null,
 }
-
 
 const tabsReducer = createReducer(initialState, (builder) => {
     builder
@@ -46,12 +45,6 @@ const tabsReducer = createReducer(initialState, (builder) => {
         .addCase(addQuery, (state, action) => {
             state.list[action.payload.key] = 'query';
             state.currentTab = action.payload.key;
-        })
-        .addCase(loadQuery, (state, action) => {
-            if (action.payload) {
-                state.list[action.payload.key] = 'query';
-                state.currentTab = action.payload.key;
-            }
         })
 });
 

@@ -1,12 +1,13 @@
-import {Query, QueryResponse} from "../types";
-import {fetchJSON} from "chums-components";
+import type {Query, QueryResponse} from "../types";
+import {fetchJSON} from "@chumsinc/ui-utils";
 
 export async function execQuery(arg:Query):Promise<QueryResponse|null> {
     try {
-        const url = '/node-sage/api/:company/query/:limit/:offset'
-            .replace(':company', encodeURIComponent(arg.company))
-            .replace(':limit', encodeURIComponent(arg.limit))
-            .replace(':offset', encodeURIComponent(arg.offset));
+        const params = new URLSearchParams();
+        params.set('limit', `${arg.limit}`);
+        params.set('offset', `${arg.offset}`)
+        const url = '/node-sage/api/:company/query.json'
+            .replace(':company', encodeURIComponent(arg.company));
         const res = await fetchJSON<QueryResponse>(url, {
             method: 'POST',
             body: JSON.stringify({
@@ -16,6 +17,9 @@ export async function execQuery(arg:Query):Promise<QueryResponse|null> {
                 offset: arg.offset,
             })
         });
+        if (res) {
+            res.timestamp = new Date().toISOString();
+        }
         if (res?.Data) {
             res.Data = res.Data.map((row, index) => ({...row, _id: index}));
         }

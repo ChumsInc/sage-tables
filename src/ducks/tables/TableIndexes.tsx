@@ -1,5 +1,4 @@
-import React from "react";
-import {TableResponse} from "../../types";
+import type {TableResponse} from "../../types";
 import IndexRow from "./IndexRow";
 
 

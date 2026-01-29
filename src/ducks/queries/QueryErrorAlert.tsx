@@ -1,17 +1,14 @@
-import React from 'react';
 import {useAppSelector} from "../../app/configureStore";
-import {selectQueryResponseError} from "./selectors";
-import {Alert} from "chums-components";
+import Alert from "react-bootstrap/Alert";
+import {selectCurrentQueryError} from "@/ducks/queries/index.ts";
 
-const QueryErrorAlert = ({queryKey}:{queryKey:string}) => {
-    const error = useAppSelector((state) => selectQueryResponseError(state, queryKey));
+export default function QueryErrorAlert() {
+    const error = useAppSelector(selectCurrentQueryError);
     if (!error) {
         return null;
     }
 
     return (
-        <Alert color="danger">{error}</Alert>
+        <Alert variant="danger">{error}</Alert>
     )
 }
-
-export default QueryErrorAlert;

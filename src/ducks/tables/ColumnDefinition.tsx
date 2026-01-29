@@ -1,5 +1,4 @@
-import React from "react";
-import {FieldType} from "../../types";
+import type {FieldType} from "../../types";
 
 
 const mapColType = (colType: FieldType|'timestamp', size?:number, decimals?:number) => {

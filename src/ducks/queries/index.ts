@@ -1,99 +1,167 @@
-import {
-    ActionStatus,
-    DataRow,
-    Query,
-    QueryChangeProps,
-    QueryList,
-    QueryPageProps,
-    QueryResponse,
-    QueryRowsPerPageProps
-} from "../../types";
-import {createAction, createAsyncThunk, createReducer, createSelector} from "@reduxjs/toolkit";
-import {defaultSort, emptyQuery, getQueryKey} from "../../utils";
-import {RootState} from "../../app/configureStore";
-import {closeTab} from "../tabs/actions";
-import {execQuery} from "../../api/query";
-import {SortProps} from "chums-components";
-import {selectCurrentTab} from "../tabs/selectors";
-import {
-    addQuery,
-    executeQuery, loadQuery,
-    saveQuery,
-    setQueryPage,
-    setQueryRowsPerPage,
-    setQuerySort,
-    updateQuery
-} from "./actions";
+import type {ActionStatus, Query, QueryChangeProps} from "../../types";
+import {createEntityAdapter, createSelector, createSlice, type PayloadAction} from "@reduxjs/toolkit";
+import {executeQuery} from "./actions";
+import {selectCurrentTab} from "@/ducks/tabs/selectors.ts";
+import {defaultSort} from "@/src/utils.ts";
+import {dataSorter} from "@/ducks/queries/utils.ts";
+import {closeTab} from "@/ducks/tabs/actions.ts";
+
+const adapter = createEntityAdapter<Query, string>({
+    selectId: (query) => query.key,
+    sortComparer: (a, b) => a.key.localeCompare(b.key),
+})
+
+const selectors = adapter.getSelectors();
 
 export interface QueriesState {
-    list: QueryList;
     status: ActionStatus;
 }
 
-
 const initialQueriesState: QueriesState = {
-    list: {},
     status: "idle",
 }
 
-const queriesReducer = createReducer(initialQueriesState, (builder) => {
-    builder
-        .addCase(addQuery, (state, action) => {
-            if (!state.list[action.payload.key]) {
-                state.list[action.payload.key] = action.payload;
-            }
-        })
-        .addCase(updateQuery, (state, action) => {
-            const {key, ...props} = action.payload;
-            if (state.list[key].status !== 'pending') {
-                state.list[key] = {...state.list[key], ...props, changed: true};
-            }
-        })
-        .addCase(closeTab, (state, action) => {
-            delete state.list[action.payload];
-        })
-        .addCase(executeQuery.pending, (state, action) => {
-            state.list[action.meta.arg].status = 'pending';
-            state.list[action.meta.arg].error = undefined;
-        })
-        .addCase(executeQuery.fulfilled, (state, action) => {
-            const key = action.meta.arg;
-            if (state.list[key]) {
-                state.list[key].status = 'fulfilled';
-                state.list[key].response = action.payload;
-                state.list[key].page = 0;
-                state.list[key].error = action.payload?.Error ?? null;
-            }
-        })
-        .addCase(executeQuery.rejected, (state, action) => {
-            state.list[action.meta.arg].status = 'rejected';
-            state.list[action.meta.arg].error = action.error.message;
-        })
-        .addCase(setQuerySort, (state, action) => {
-            state.list[action.payload.key].sort = action.payload.sort ?? {...defaultSort};
-        })
-        .addCase(setQueryPage, (state, action) => {
-            state.list[action.payload.key].page = action.payload.page;
-        })
-        .addCase(setQueryRowsPerPage, (state, action) => {
-            const {key, rowsPerPage} = action.payload;
-            if (rowsPerPage === 0) {
-                return;
-            }
-            const firstRowIndex = state.list[key].page * state.list[key].rowsPerPage;
-            state.list[key].page = Math.floor(firstRowIndex / rowsPerPage);
-            state.list[key].rowsPerPage = rowsPerPage;
-        })
-        .addCase(saveQuery.fulfilled, (state, action) => {
-            const {key} = action.meta.arg;
-            state.list[key].changed = false;
-        })
-        .addCase(loadQuery, (state, action) => {
-            if (action.payload) {
-                const {key} = action.payload;
-                state.list[key] = action.payload;
-            }
-        })
-});
+const queriesSlice = createSlice({
+    name: 'queries',
+    initialState: adapter.getInitialState(initialQueriesState),
+    reducers: {
+        addQuery: (state, action: PayloadAction<Query>) => {
+            adapter.addOne(state, action.payload);
+        },
+        closeQuery: (state, action: PayloadAction<string>) => {
+            adapter.removeOne(state, action.payload);
+        },
+        updateQuery: (state, action: PayloadAction<QueryChangeProps>) => {
+            adapter.updateOne(state, {id: action.payload.key, changes: action.payload});
+        }
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(executeQuery.pending, (state, action) => {
+                const key = action.meta.arg.key;
+                state.status = 'pending';
+                adapter.updateOne(state, {
+                    id: key,
+                    changes: {
+                        status: 'pending',
+                        error: null,
+                        sql: action.meta.arg.sql
+                    }
+                });
+            })
+            .addCase(executeQuery.fulfilled, (state, action) => {
+                const key = action.meta.arg.key;
+                state.status = 'idle';
+                adapter.updateOne(state, {
+                    id: key,
+                    changes: {
+                        status: 'idle',
+                        error: action.payload?.Error ?? null,
+                        response: action.payload,
+                        page: 0,
+                    }
+                });
+            })
+            .addCase(executeQuery.rejected, (state, action) => {
+                const key = action.meta.arg.key;
+                state.status = 'rejected';
+                adapter.updateOne(state, {
+                    id: key,
+                    changes: {
+                        status: 'rejected',
+                        error: action.error.message ?? null
+                    }
+                })
+            })
+            .addCase(closeTab, (state, action) => {
+                adapter.removeOne(state, action.payload);
+            })
+    },
+    selectors: {
+        selectQueryList: (state) => selectors.selectAll(state),
+        selectQueryStatus: (state) => state.status,
+    }
+})
+export default queriesSlice;
+export const {closeQuery, updateQuery, addQuery} = queriesSlice.actions;
+export const {selectQueryList, selectQueryStatus} = queriesSlice.selectors;
 
-export default queriesReducer;
+export const selectCurrentQuery = createSelector(
+    [selectQueryList, selectCurrentTab],
+    (list, tab) => {
+        const query = list.find(q => q.key === tab);
+        return query ?? null;
+    }
+);
+
+export const selectCurrentQueryDataLength = createSelector(
+    [selectCurrentQuery],
+    (query) => {
+        if (!query || !query.response) {
+            return 0;
+        }
+        return query.response.Data.length;
+    }
+)
+
+export const selectCurrentQueryPagedData = createSelector(
+    [selectCurrentQuery],
+    (query) => {
+        const data = query?.response?.Data ?? [];
+        const sort = query?.sort ?? defaultSort;
+        const page = query?.page ?? 0;
+        const rowPerPage = query?.rowsPerPage ?? 10;
+
+        return [...data].sort(dataSorter(sort))
+            .slice(page * rowPerPage, (page + 1) * rowPerPage);
+    }
+)
+
+export const selectCurrentQueryData = createSelector(
+    [selectCurrentQuery],
+    (query) => query?.response?.Data ?? []
+)
+
+
+export const selectCurrentQueryFields = createSelector(
+    [selectCurrentQuery],
+    (query) => {
+        return query?.response?.Fields ?? [];
+    }
+)
+
+export const selectCurrentQueryDuration  = createSelector(
+    [selectCurrentQuery],
+    (query) => {
+        return query?.response?.timings?.duration ?? 0;
+    }
+)
+
+export const selectQuerySql = createSelector(
+    [selectCurrentQuery],
+    (query) => {
+        return query?.sql ?? '';
+    }
+)
+
+export const selectCurrentQuerySort = createSelector(
+    [selectCurrentQuery],
+    (query) => {
+        return query?.sort ?? defaultSort;
+    }
+)
+
+export const selectCurrentQueryError = createSelector(
+    [selectCurrentQuery],
+    (query) => query?.response?.Error ?? null
+)
+
+export const selectCurrentQueryPaginationProps = createSelector(
+    [selectCurrentQuery],
+    (query) => {
+        return {
+            page: query?.page ?? 0,
+            rowsPerPage: query?.rowsPerPage ?? 10,
+        }
+    }
+)

@@ -1,8 +1,8 @@
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
-import {CompanyCode, ServerName, TableResponse} from "../../types";
-import {RootState} from "../../app/configureStore";
+import type {CompanyCode, ServerName, TableResponse} from "../../types";
+import type {RootState} from "../../app/configureStore";
 import {fetchTable, fetchTables} from "../../api/tables";
-import {selectCompany, selectLoading, selectServer} from "./selectors";
+import {selectLoading} from "./selectors";
 
 export const setServer = createAction<ServerName>('list/setServer');
 export const setCompany = createAction<CompanyCode>('list/setCompany');
@@ -13,27 +13,21 @@ export const setPage = createAction<number>('list/setPage');
 
 export const loadTables = createAsyncThunk<string[]>(
     'list/loadList',
-    async (arg, {getState}) => {
-        const state = getState() as RootState;
-        const server = selectServer(state);
-        const company = selectCompany(state);
-        return await fetchTables({server, company});
+    async () => {
+        return await fetchTables();
     },
     {
-        condition(arg, {getState}) {
+        condition(_, {getState}) {
             const state = getState() as RootState;
             return !selectLoading(state);
         }
     }
 )
 
-export const loadTable = createAsyncThunk<TableResponse|null, string>(
+export const loadTable = createAsyncThunk<TableResponse | null, string>(
     'list/loadTable',
-    async (arg, {getState}) => {
-        const state = getState() as RootState;
-        const server = selectServer(state);
-        const company = selectCompany(state);
-        return await fetchTable({server, company}, arg);
+    async (arg) => {
+        return await fetchTable(arg);
     }
 )
 

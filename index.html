@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+    <meta charSet="utf-8"/>
+    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+    <title>Sage Tables / localhost</title>
+    <meta name="description" content="Sage Tables"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&family=Roboto:wght@300;400;700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://intranet.chums.com/node_modules/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css" href="https://intranet.chums.com/node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="https://intranet.chums.com/css/intranet.css?v=1494436263">
+    <link rel="stylesheet" type="text/css" href="https://intranet.chums.com/css/chums.css">
+    <link rel="icon" type="image/x-icon" href="https://intranet.chums.com/favicon.ico"/>
+    <script src="https://intranet.chums.com/js/preferred-theme.js"></script>
+</head>
+<body>
+<header class="site-header">
+    <nav class="navbar navbar-chums navbar-expand-lg navbar-light bg-body-tertiary scroll-top">
+        <div class="site-logo">
+            <div class="logo-center">
+                <a href="/">
+                    <img class="logo" id="navbar-logo" alt="Chums Logo"
+                         src="https://intranet.chums.com/images/logos/Chums-Logo-Badge-Red-RGB.png"
+                         style="margin-top: 0;">
+                </a>
+            </div>
+        </div>
+        <div style="flex: 1 1 auto; display: flex; justify-content: flex-end;" class="me-3">
+            <div class="dropdown">
+                <button class="btn btn-link nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="bi bi-circle-half"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <button class="dropdown-item" id="theme--light" data-bs-theme-value="light">
+                            <span class="bi bi-sun-fill me-1" role="presentation"></span>
+                            Light Mode
+                        </button>
+                    </li>
+                    <li>
+                        <button class="dropdown-item" id="theme--dark" data-bs-theme-value="dark">
+                            <span class="bi bi-moon-stars-fill me-1" role="presentation"></span>
+                            Dark Mode
+                        </button>
+                    </li>
+                    <li>
+                        <button class="dropdown-item" id="theme--auto" data-bs-theme-value="auto">
+                            <span class="bi bi-circle-half me-1" role="presentation"></span>
+                            Auto Mode
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+<main class="container-fluid">
+    <div>
+        <div>
+            <h1 id="top-title">Sage Tables</h1>
+            <div id="PageDescription">
+                <span id="PageDescriptionText"></span>
+            </div>
+        </div>
+    </div>
+    <div id="app">
+        <div class="alert alert-info"><strong>Loading</strong> app.</div>
+    </div>
+</main>
+<script type="module" src="/src/index.tsx"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
+</body>
+</html>

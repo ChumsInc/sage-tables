@@ -1,13 +1,13 @@
-import React, {MouseEvent} from 'react';
+import type {MouseEvent} from 'react';
 import {useAppDispatch} from "../../app/configureStore";
 import {useSelector} from "react-redux";
 import {selectCurrentTab, selectTabs} from "./selectors";
-import {addQuery} from "../queries/actions";
+import {addQuery} from "../queries";
 import {selectCompany} from "../tables/selectors";
 import {emptyQuery, getQueryKey} from "../../utils";
-import {TabItem} from "chums-components";
 import {closeTab, setTab} from "./actions";
 import dayjs from "dayjs";
+import {CloseButton, Nav} from "react-bootstrap";
 
 const Tabs = () => {
     const dispatch = useAppDispatch();
@@ -15,7 +15,7 @@ const Tabs = () => {
     const currentTab = useSelector(selectCurrentTab);
     const company = useSelector(selectCompany);
 
-    const newTabHandler = (ev:MouseEvent) => {
+    const newTabHandler = (ev: MouseEvent) => {
         ev.preventDefault();
         dispatch(addQuery({
             ...emptyQuery(company),
@@ -23,7 +23,7 @@ const Tabs = () => {
         }))
     }
 
-    const onSelectTab = (key?: string) => {
+    const onSelectTab = (key: string|null) => {
         if (!key) {
             return;
         }
@@ -38,18 +38,19 @@ const Tabs = () => {
     }
 
     return (
-        <ul className="nav nav-tabs mb-2">
-            <li className="nav-item">
-                <a className="nav-link" href="#" onClick={newTabHandler}>+</a>
-            </li>
+        <Nav variant="tabs" className="mb-2" activeKey={currentTab ?? 'new'} onSelect={onSelectTab} >
+            <Nav.Item>
+                <Nav.Link onClick={newTabHandler} eventKey="new">+</Nav.Link>
+            </Nav.Item>
             {Object.keys(tabs).map(key => (
-                <TabItem key={key} id={key} active={currentTab === key}
-                         title={/^[a-z0-9]+$/.test(key) ? (dayjs(parseInt(key, 36)).format('HH:mm:ss')) : key}
-                         canClose
-                         onSelect={onSelectTab}
-                         onClose={onCloseTab}/>
+                <Nav.Item key={key}>
+                    <Nav.Link eventKey={key}>
+                        <span className="me-1">{/^[a-z0-9]+$/.test(key) ? (dayjs(parseInt(key, 36)).format('HH:mm:ss')) : key}</span>
+                        <CloseButton onClick={() => onCloseTab(key)} />
+                    </Nav.Link>
+                </Nav.Item>
             ))}
-        </ul>
+        </Nav>
     )
 
 }

@@ -1,29 +1,19 @@
-import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
-import {Query, QueryChangeProps, QueryPageProps, QueryResponse, QueryRowsPerPageProps, SavedQuery} from "../../types";
-import {execQuery} from "../../api/query";
-import {RootState} from "../../app/configureStore";
-import {selectQuery} from "./selectors";
+import {createAsyncThunk} from "@reduxjs/toolkit";
+import type {Query, QueryResponse, SavedQuery} from "../../types";
+import {execQuery} from "@/api/query";
+import type {RootState} from "@/app/configureStore";
 import {saveAs} from "file-saver";
+import {selectQueryStatus} from "@/ducks/queries/index.ts";
 
-export const updateQuery = createAction<QueryChangeProps>('queries/setQuery');
-export const setQuerySort = createAction<QueryChangeProps>('queries/setSort');
-export const setQueryPage = createAction<QueryPageProps>('queries/setPage');
-export const setQueryRowsPerPage = createAction<QueryRowsPerPageProps>('queries/setRowPerPage');
-
-
-export const addQuery = createAction<Query>('queries/addQuery');
-export const executeQuery = createAsyncThunk<QueryResponse|null, string>(
+export const executeQuery = createAsyncThunk<QueryResponse | null, Query, { state: RootState }>(
     'queries/execute',
-    async (arg, {getState}) => {
-        const state = getState() as RootState;
-        const query = selectQuery(state, arg);
-        return await execQuery(query!)
+    async (arg) => {
+        return await execQuery(arg)
     },
     {
         condition: (arg, {getState}) => {
-            const state = getState() as RootState;
-            const query = selectQuery(state, arg);
-            return !!query && !!query.sql && query.status !== 'pending';
+            const state = getState();
+            return arg.sql.length > 10 && selectQueryStatus(state) === 'idle';
         }
     }
 )
@@ -45,4 +35,3 @@ export const saveQuery = createAsyncThunk<void, Query>(
     }
 )
 
-export const loadQuery = createAction<Query>('queries/loadQuery')

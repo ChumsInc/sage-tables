@@ -1,53 +1,62 @@
-import React, {ChangeEvent, KeyboardEvent, useEffect, useRef, useState} from 'react';
-import {executeQuery, updateQuery} from "./actions";
-import {useAppDispatch, useAppSelector} from "../../app/configureStore";
+import {type ChangeEvent, useState} from 'react';
+import {executeQuery} from "./actions";
+import {useAppDispatch, useAppSelector} from "@/app/configureStore";
 import CompanySelect from "./CompanySelect";
-import {CompanyCode, Query} from "../../types";
-import TextareaAutosize from "@mui/material/TextareaAutosize";
-import {SpinnerButton} from "chums-components";
-import {selectQuery} from "./selectors";
+import type {Query} from "../../types";
 import SaveQueryButton from "./SaveQueryButton";
 import LoadQueryButton from "./LoadQueryButton";
 import SQLEditor from "./SQLEditor";
+import Button from "react-bootstrap/Button";
+import {selectCurrentQuery} from "@/ducks/queries/index.ts";
 
-
-const QueryEditor = ({queryKey}: { queryKey: string }) => {
+export interface QueryEditorProps {
+    queryKey: string;
+}
+export default function QueryEditor({queryKey}:QueryEditorProps) {
     const dispatch = useAppDispatch();
-    const query = useAppSelector(state => selectQuery(state, queryKey));
-    const [key, setKey] = useState<string>(queryKey);
-
-    useEffect(() => {
-        setKey(queryKey);
-    }, [queryKey]);
+    const query = useAppSelector(selectCurrentQuery);
+    const [sql, setSql] = useState<string>(query?.sql ?? '');
+    const [limit, setLimit] = useState<number>(query?.limit ?? 100);
+    const [offset, setOffset] = useState<number>(query?.offset ?? 0);
 
     const queryChangeHandler = (field: keyof Pick<Query, 'company' | 'limit' | 'offset' | 'sql'>) =>
         (ev: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
             switch (field) {
                 case 'limit':
-                case 'offset':
-                    dispatch(updateQuery({key, [field]: +ev.target.value}));
-                    return
-                case 'company':
-                    dispatch(updateQuery({key, [field]: ev.target.value as CompanyCode}));
+                    setLimit(+ev.target.value);
                     return;
+                case 'offset':
+                    setOffset(+ev.target.value);
+                    return;
+                case 'sql':
+                    setSql(ev.target.value);
             }
         }
 
     const submitHandler = async () => {
-        await dispatch(executeQuery(key));
+        if (!query) {
+            return
+        }
+        await dispatch(executeQuery({...query, sql, limit, offset}));
     }
 
-    const editorChangeHandler = async (sql?:string) => {
-        dispatch(updateQuery({key, sql}));
+    const editorChangeHandler = async (sql?: string) => {
+        setSql(sql ?? '');
     }
-    const editorSubmitHandler = async (sql:string, queryKey: string) => {
-        console.log('editorSubmitHandler', queryKey, sql);
-        dispatch(updateQuery({key: queryKey, sql}));
-        await dispatch(executeQuery(queryKey))
+
+    const editorSubmitHandler = async (sql: string) => {
+        if (!query) {
+            return;
+        }
+        await dispatch(executeQuery({...query, sql, limit, offset}));
+    }
+
+    if (!query) {
+        return null;
     }
 
     return (
-        <div>
+        <div key={queryKey}>
             <div className="row g-3 mb-1">
                 <div className="col-auto">
                     <CompanySelect value={query?.company ?? 'CHI'} onChange={queryChangeHandler('company')}/>
@@ -72,25 +81,22 @@ const QueryEditor = ({queryKey}: { queryKey: string }) => {
                     </div>
                 </div>
                 <div className="col-auto">
-                    <SpinnerButton type="button" size="sm" color="primary"
-                                   spinning={query?.status === 'pending'}
-                                   onClick={submitHandler}>
+                    <Button type="button" size="sm" color="primary"
+                            onClick={submitHandler}>
+                        {query?.status === 'pending' && <span className="spinner-border spinner-border-sm me-1"/>}
                         Submit
-                    </SpinnerButton>
+                    </Button>
                 </div>
                 <div className="col-auto">
-                    <SaveQueryButton queryKey={key}/>
+                    <SaveQueryButton changed={query.sql !== sql}/>
                 </div>
                 <div className="col-auto">
-                    <LoadQueryButton queryKey={key}/>
+                    <LoadQueryButton queryKey={query.key} changed={query.sql !== sql}/>
                 </div>
-                <div className="col">{key}</div>
+                <div className="col text-end">ID: {query.key}</div>
             </div>
-            <SQLEditor queryKey={queryKey} sql={query?.sql ?? ''} onChange={editorChangeHandler}
-                       onExecute={editorSubmitHandler} readonly={query?.status === 'pending'} />
+            <SQLEditor queryKey={query.key} sql={query?.sql ?? ''} onChange={editorChangeHandler}
+                       onExecute={editorSubmitHandler} readonly={query?.status === 'pending'}/>
         </div>
     )
 }
-
-
-export default QueryEditor;

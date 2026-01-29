@@ -1,5 +1,5 @@
 import {QueryStatus} from "@reduxjs/toolkit/query";
-import {SortProps} from "chums-components";
+import type {SortProps} from "chums-types";
 import {createAction} from "@reduxjs/toolkit";
 
 export interface ListState<T=any> {

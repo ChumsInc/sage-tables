@@ -1,4 +1,4 @@
-import React, {SelectHTMLAttributes} from "react";
+import type {SelectHTMLAttributes} from "react";
 import classNames from "classnames";
 
 export default function CompanySelect({value, onChange, className, ...props}: SelectHTMLAttributes<HTMLSelectElement>) {
@@ -7,7 +7,7 @@ export default function CompanySelect({value, onChange, className, ...props}: Se
             <div className="input-group-text">
                 <span className="bi-database"/>
             </div>
-            <select value={value} onChange={onChange} className={classNames("form-select form-select-sm", className)}>
+            <select value={value} onChange={onChange} className={classNames("form-select form-select-sm", className)} {...props}>
                 <option value="CHI">CHI</option>
                 <option value="TST">TST</option>
             </select>

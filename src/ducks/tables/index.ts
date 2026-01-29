@@ -1,4 +1,4 @@
-import {ActionStatus, CompanyCode, ServerName, TableResponse} from "../../types";
+import type {ActionStatus, CompanyCode, ServerName, TableResponse} from "../../types";
 import {createReducer} from "@reduxjs/toolkit";
 import {loadTable, loadTables, setCompany, setFilter, setPage, setRowsPerPage, setServer} from "./actions";
 
@@ -39,7 +39,7 @@ const tablesReducer = createReducer(initialTablesState, (builder) => {
             state.filter = action.payload;
             state.page = 0;
         })
-        .addCase(loadTables.pending, (state, action) => {
+        .addCase(loadTables.pending, (state) => {
             state.status = 'pending';
         })
         .addCase(loadTables.fulfilled, (state, action) => {

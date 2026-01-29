@@ -1,8 +1,7 @@
-import React from 'react';
 import TablesFilter from "./TablesFilter";
 import TablesList from "./TablesList";
 
-const TablesContainer:React.FC = () => {
+const TablesContainer = () => {
 
     return (
         <div>

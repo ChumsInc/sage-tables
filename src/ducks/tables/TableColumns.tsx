@@ -1,5 +1,4 @@
-import React from 'react';
-import {TableColumn} from "../../types";
+import type {TableColumn} from "../../types";
 
 export interface TableColumnsProps {
     columns: TableColumn[];

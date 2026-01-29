@@ -1,8 +1,8 @@
-import React from 'react';
 import {useSelector} from "react-redux";
 import {dismissAlert, selectAlerts} from "./index";
-import {Alert} from "chums-components";
-import {useAppDispatch} from "../../app/configureStore";
+import {useAppDispatch} from "@/app/configureStore";
+import Alert from "react-bootstrap/Alert";
+import {Badge} from "react-bootstrap";
 
 const AlertList = () => {
     const dispatch = useAppDispatch();
@@ -13,8 +13,10 @@ const AlertList = () => {
     return (
         <div>
             {Object.keys(alerts).map(key => (
-                <Alert key={key} color={alerts[key].color} onDismiss={() => dismissHandler(key)} count={alerts[key].count}>
-                    [<strong>{alerts[key].context}</strong>] {alerts[key].message}
+                <Alert key={key} variant={alerts[key].color} onClose={() => dismissHandler(key)}>
+                    [<strong>{alerts[key].context}</strong>]
+                    {alerts[key].count > 1 && <Badge bg={alerts[key].color} />}
+                    <span className="ms-1">{alerts[key].message}</span>
                     {!!alerts[key].error && (
                         <div style={{whiteSpace: 'pre-wrap'}}>{alerts[key].error?.stack}</div>
                     )}

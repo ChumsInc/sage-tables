@@ -1,12 +1,19 @@
-import React from 'react';
-import {Alert} from "chums-components";
-import {FallbackProps} from "react-error-boundary";
+import Alert from "react-bootstrap/Alert";
+import type {FallbackProps} from "react-error-boundary";
 
-export default function ErrorFallback({error, resetErrorBoundary}: FallbackProps) {
+export default function ErrorFallback({error}: FallbackProps) {
+    if (error instanceof Error) {
+        return (
+            <Alert variant="danger">
+                <strong>Sorry! Something went wrong.</strong>
+                <div className="text-danger" style={{whiteSpace: 'pre-wrap'}}>{error.message}</div>
+            </Alert>
+        )
+    }
     return (
-        <Alert color="danger">
+        <Alert variant="danger">
             <strong>Sorry! Something went wrong.</strong>
-            <div className="text-danger" style={{whiteSpace: 'pre-wrap'}}>{error.message}</div>
+            <div className="text-danger" style={{whiteSpace: 'pre-wrap'}}>Unknown error</div>
         </Alert>
     )
 }

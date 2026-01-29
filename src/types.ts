@@ -1,7 +1,8 @@
-import {Editable} from "chums-types";
-import {SortProps} from "chums-components";
+import type {Editable, SortProps} from "chums-types";
+import type {ArgumentArray} from "classnames";
+import type {Variant} from 'react-bootstrap/types'
 
-export type ActionStatus = 'idle'|'pending'|'fulfilled'|'rejected';
+export type ActionStatus = 'idle' | 'pending' | 'fulfilled' | 'rejected';
 
 export interface Query {
     key: string;
@@ -9,24 +10,29 @@ export interface Query {
     limit: number;
     offset: number;
     sql: string;
-    timestamp: string|null;
-    response: QueryResponse|null;
+    timestamp: string | null;
+    response: QueryResponse | null;
     dirty: boolean;
     status: ActionStatus;
-    sort:SortProps<DataRow>;
+    sort: SortProps<DataRow>;
     page: number;
     rowsPerPage: number;
     filename?: string;
-    error?: string|null;
+    error?: string | null;
 }
 
-export type QueryChangeProps = Partial<Query> & Pick<Query, 'key'> ;
-export type QueryPageProps = Pick<Query, 'key'|'page'>;
-export type QueryRowsPerPageProps = Pick<Query, 'key'|'rowsPerPage'>;
+export type QueryChangeProps = Partial<Query> & Pick<Query, 'key'>;
+export type QueryPageProps = Pick<Query, 'key' | 'page'>;
+export type QueryRowsPerPageProps = Pick<Query, 'key' | 'rowsPerPage'>;
 
-export type SavedQuery = Pick<Query, 'company'|'sql'|'filename'>;
+export type SavedQuery = Pick<Query, 'company' | 'sql' | 'filename'>;
 
-export type FieldType = 'VARCHAR'|'DECIMAL'|'DATE'|'LONGVARCHAR';
+export type FieldType = 'VARCHAR' | 'DECIMAL' | 'DATE' | 'LONGVARCHAR';
+
+export interface ExecuteQueryProps {
+    tab: string;
+    query: Query;
+}
 
 export interface QueryField {
     Name: string;
@@ -35,33 +41,35 @@ export interface QueryField {
 
 export interface DataRow {
     _id: number;
-    [field:string]: string|number|null;
+
+    [field: string]: string | number | null;
 }
 
 export interface QueryResponse {
     Company: string;
     Fields: QueryField[],
-    Error: string|null;
+    Error: string | null;
     Data: DataRow[],
     Query: string;
     timings: {
         duration: number;
     }
+    timestamp: string;
 }
 
 export interface QueryList {
-    [key:string]: Query & Editable;
+    [key: string]: Query & Editable;
 }
 
 export interface TableIndex {
     fields: string[];
-    filter: unknown|null;
+    filter: unknown | null;
     unique: boolean;
 }
 
 export interface TableColumn {
     TABLE_CAT: null;
-    TABLE_SCHEM: string|null;
+    TABLE_SCHEM: string | null;
     TABLE_NAME: string;
     COLUMN_NAME: string;
     DATA_TYPE: string;
@@ -69,36 +77,37 @@ export interface TableColumn {
     COLUMN_SIZE: number;
     BUFFER_LENGTH: number;
     DECIMAL_DIGITS: number;
-    NUM_PREC_RADIX: number|null;
+    NUM_PREC_RADIX: number | null;
     NULLABLE: boolean;
-    REMARKS: string|null;
+    REMARKS: string | null;
     COLUMN_DEF: string;
-    SQL_DATA_TYPE: string|number;
-    SQL_DATETIME_SUB: number|null,
-    CHAR_OCTET_LENGTH: string|number|null,
+    SQL_DATA_TYPE: string | number;
+    SQL_DATETIME_SUB: number | null,
+    CHAR_OCTET_LENGTH: string | number | null,
     ORDINAL_POSITION: number,
-    IS_NULLABLE: 'YES'|'NO';
+    IS_NULLABLE: 'YES' | 'NO';
 }
 
 export interface RawIndex {
     TABLE_CAT: string;
     TABLE_SCHEM: string;
     TABLE_NAME: string;
-    NON_UNIQUE: '0'|'1';
+    NON_UNIQUE: '0' | '1';
     INDEX_QUALIFIER: string;
     INDEX_NAME: string;
     TYPE: string;
     ORDINAL_POSITION: number;
     COLUMN_NAME: string;
-    ASC_OR_DESC: 'A'|'D';
+    ASC_OR_DESC: 'A' | 'D';
     CARDINALITY: null;
     PAGES: null;
     FILTER_CONDITION: null;
 }
 
 export interface IndexList {
-    [key:string]: TableIndex;
+    [key: string]: TableIndex;
 }
+
 export interface TableResponse {
     tableName: string;
     columns: TableColumn[],
@@ -108,14 +117,14 @@ export interface TableResponse {
     loading?: boolean;
 }
 
-export type TabType = 'query'|'table';
+export type TabType = 'query' | 'table';
 
 export interface TabList {
-    [key:string]: TabType;
+    [key: string]: TabType;
 }
 
 export type ServerName = 'ARCHES';
-export type CompanyCode = 'CHI'|'TST';
+export type CompanyCode = 'CHI' | 'TST';
 
 export interface CompanyServer {
     server: ServerName;
@@ -131,4 +140,21 @@ export interface DBTableSettings {
     MysqlFields: string[];
     PreExecute: string[];
     PostExecute: string[];
+}
+
+export interface BasicAlert {
+    title?: string,
+    message?: string,
+    context?: string,
+    color?: Variant,
+    className?: string | ArgumentArray,
+    canDismiss?: boolean,
+}
+
+export interface ErrorAlert {
+    id: number;
+    context: string;
+    message: string;
+    count: number;
+    color?: Variant;
 }

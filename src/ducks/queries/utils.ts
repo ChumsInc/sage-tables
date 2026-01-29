@@ -1,5 +1,5 @@
-import {SortProps} from "chums-components";
-import {DataRow} from "../../types";
+import type {SortProps} from "chums-types";
+import type {DataRow} from "../../types";
 
 export const dataSorter = (sort:SortProps<DataRow>) => (a:DataRow, b:DataRow) => {
     const aVal = a[sort.field as string] ?? '';

@@ -1,14 +1,20 @@
-import React, {useRef, useState} from "react";
+import {useRef, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../app/configureStore";
-import {selectQuery} from "./selectors";
-import {loadQuery} from "./actions";
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
-import {SavedQuery} from "../../types";
+import type {SavedQuery} from "../../types";
 import {emptyQuery} from "../../utils";
+import {Modal} from "react-bootstrap";
+import Alert from "react-bootstrap/Alert";
+import Button from "react-bootstrap/Button";
+import {addQuery, selectCurrentQuery} from "@/ducks/queries/index.ts";
 
-const LoadQueryButton = ({queryKey}: { queryKey: string }) => {
+export interface LoadQueryButtonProps {
+    queryKey: string;
+    changed?: boolean;
+}
+
+const LoadQueryButton = ({queryKey, changed}: LoadQueryButtonProps) => {
     const dispatch = useAppDispatch();
-    const query = useAppSelector((state) => selectQuery(state, queryKey));
+    const query = useAppSelector(selectCurrentQuery);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [open, setOpen] = useState(false);
 
@@ -27,7 +33,7 @@ const LoadQueryButton = ({queryKey}: { queryKey: string }) => {
                     if (!query || !query.sql) {
                         return;
                     }
-                    dispatch(loadQuery({
+                    dispatch(addQuery({
                         ...emptyQuery(query.company ?? 'CHI'),
                         key: queryKey,
                         sql: query.sql ?? '',
@@ -57,25 +63,27 @@ const LoadQueryButton = ({queryKey}: { queryKey: string }) => {
                 {!query.filename && <span>Load Query</span>}
                 {!!query.filename && <span>{query.filename}</span>}
             </button>
-            <Dialog open={open} onClose={closeHandler} maxWidth="md" fullWidth>
-                {query.changed && (<DialogTitle>
-                        You're about to lose your changes!
-                    </DialogTitle>
-                )}
-                {!query.changed && (<DialogTitle>
-                    Load a query
-                </DialogTitle>)}
-                <DialogContent>
-                    <DialogContentText>Open File:</DialogContentText>
-                    <input type="file" className="form-control form-control-sm" accept="application/json"
-                           value=""
-                           onChange={fileChangeHandler} ref={fileInputRef}/>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={closeHandler}>Cancel</Button>
-                    <Button onClick={fileChangeHandler}>Open File</Button>
-                </DialogActions>
-            </Dialog>
+            <Modal show={open} onClose={closeHandler} size="lg">
+                <Modal.Header closeButton>
+                    <Modal.Title>Load Query</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {changed && (
+                        <Alert variant="warning">
+                            You're about to lose your changes!
+                        </Alert>
+                    )}
+                    <div>
+                        <input type="file" className="form-control form-control-sm" accept="application/json"
+                               value=""
+                               onChange={fileChangeHandler} ref={fileInputRef}/>/
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="outline-secondary" onClick={closeHandler}>Cancel</Button>
+                    <Button variant="primary" onClick={fileChangeHandler}>Open File</Button>
+                </Modal.Footer>
+            </Modal>
         </>
     )
 }

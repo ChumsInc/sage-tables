@@ -1,13 +1,18 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useAppDispatch, useAppSelector} from "../../app/configureStore";
-import {selectQuery} from "./selectors";
 import classNames from "classnames";
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField} from "@mui/material";
 import {saveQuery} from "./actions";
+import {Modal} from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import {selectCurrentQuery} from "@/ducks/queries/index.ts";
 
-const SaveQueryButton = ({queryKey}: { queryKey: string }) => {
+export interface SavedQueryButtonProps {
+    changed?: boolean;
+}
+
+export default function SaveQueryButton({changed}: SavedQueryButtonProps) {
     const dispatch = useAppDispatch();
-    const query = useAppSelector(state => selectQuery(state, queryKey));
+    const query = useAppSelector(selectCurrentQuery);
     const [open, setOpen] = useState(false);
     const [filename, setFilename] = useState(query?.filename ?? '');
 
@@ -30,25 +35,23 @@ const SaveQueryButton = ({queryKey}: { queryKey: string }) => {
     return (
         <>
             <button type="button" className={classNames("btn btn-sm", {
-                'btn-warning': query?.changed,
-                'btn-outline-primary': !query?.changed
+                'btn-warning': changed,
+                'btn-outline-primary': !changed
             })} onClick={saveHandler}>
                 Save
             </button>
-            <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-                <DialogTitle>Save Query</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>Save as:</DialogContentText>
-                    <TextField autoFocus margin="dense" fullWidth type="text" variant="standard" value={filename}
-                               onChange={(ev) => setFilename(ev.target.value)} />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleSave} disabled={!filename}>Save</Button>
-                </DialogActions>
-            </Dialog>
+            <Modal show={open} onClose={handleClose} size="lg">
+                <Modal.Header>Save Query</Modal.Header>
+                <Modal.Body>
+                    <h3>Save as:</h3>
+                    <input type="text" className="form-control form-control-sm" value={filename}
+                           onChange={(ev) => setFilename(ev.target.value)}/>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="outline-secondary" onClick={handleClose}>Cancel</Button>
+                    <Button variant="primary" onClick={handleSave} disabled={!filename}>Save</Button>
+                </Modal.Footer>
+            </Modal>
         </>
     )
 }
-
-export default SaveQueryButton;

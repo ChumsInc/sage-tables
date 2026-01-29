@@ -1,8 +1,7 @@
-import React, {useRef, useState} from 'react';
-import {IndexList, TableColumn} from "../../types";
+import {useId, useRef, useState} from 'react';
+import type {IndexList, TableColumn} from "../../types";
 import ColumnDefinition from "./ColumnDefinition";
-import Snackbar from "@mui/material/Snackbar";
-import {Alert, FormCheck} from "chums-components";
+import {FormCheck, Toast, ToastContainer} from "react-bootstrap";
 
 export type SQLFormat = 'MySQL' | 'DDL';
 
@@ -18,6 +17,8 @@ const CreateTable = ({table, columns, primaryKeys, indexes}: CreateTableProps) =
     const [message, setMessage] = useState<string | null>(null);
     const [open, setOpen] = useState<boolean>(false);
     const [format, setFormat] = useState<SQLFormat>('MySQL');
+    const idMySQL = useId();
+    const idDDL = useId();
 
     const clickHandler = async () => {
         if (ref.current) {
@@ -26,7 +27,7 @@ const CreateTable = ({table, columns, primaryKeys, indexes}: CreateTableProps) =
                 await navigator.clipboard.writeText(sql)
                 setMessage('SQL copied to clipboard');
                 setOpen(true);
-            } catch(err:unknown) {
+            } catch (err: unknown) {
                 if (err instanceof Error) {
                     console.debug("clickHandler()", err.message);
                     setMessage(err.message);
@@ -50,9 +51,9 @@ const CreateTable = ({table, columns, primaryKeys, indexes}: CreateTableProps) =
                     Create Table
                 </h4>
                 <div className="ms-3">
-                    <FormCheck type="radio" checked={format === 'MySQL'} inline
+                    <FormCheck type="radio" checked={format === 'MySQL'} inline id={idMySQL}
                                onChange={() => setFormat('MySQL')}>MySQL</FormCheck>
-                    <FormCheck type="radio" checked={format === 'DDL'} inline
+                    <FormCheck type="radio" checked={format === 'DDL'} inline id={idDDL}
                                onChange={() => setFormat('DDL')}>DDL</FormCheck>
                 </div>
                 <div className="ms-3">
@@ -61,12 +62,12 @@ const CreateTable = ({table, columns, primaryKeys, indexes}: CreateTableProps) =
                     </button>
                 </div>
             </div>
-            <Snackbar open={open} onClose={closeHandler}
-                      autoHideDuration={5000}>
-                <div>
-                    <Alert color="info" canDismiss onDismiss={closeHandler}>Content copied to clipboard.</Alert>
-                </div>
-            </Snackbar>
+            <ToastContainer className="position-fixed bottom-0 start-0 p-3">
+                <Toast show={open} onClose={closeHandler} autohide delay={5000} bg="info">
+                    <Toast.Header closeButton={false} className="text-center">{table}</Toast.Header>
+                    <Toast.Body>{message}</Toast.Body>
+                </Toast>
+            </ToastContainer>
             <code className="db-create-table" ref={ref}>
                 CREATE TABLE {format === 'MySQL' && 'IF NOT EXISTS c2.'}{table} (
                 {format === 'MySQL' &&

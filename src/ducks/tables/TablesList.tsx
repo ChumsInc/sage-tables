@@ -1,16 +1,22 @@
-import React, {MouseEvent, useState} from 'react';
+import {type MouseEvent, useState} from 'react';
 import {useSelector} from "react-redux";
 import {selectCompany, selectFilteredTablesList, selectPage, selectRowsPerPage} from "./selectors";
-import {setPage, loadTable} from "./actions";
+import {loadTable, setPage} from "./actions";
 import {useAppDispatch} from "../../app/configureStore";
-import {addQuery, updateQuery} from "../queries/actions";
 import {emptyQuery, getQueryKey} from "../../utils";
-import {TablePagination} from "chums-components";
-import Snackbar from "@mui/material/Snackbar";
-import {selectCurrentQuery} from "../queries/selectors";
+import {TablePagination} from "@chumsinc/sortable-tables";
+import {Toast, ToastContainer} from "react-bootstrap";
+import {addQuery, selectCurrentQuery, updateQuery} from "@/ducks/queries";
+import styled from "@emotion/styled";
 
+const TablesTable = styled.table`
+    .db-table {
+        cursor: pointer;
+    }
+    
+`
 
-const TablesList: React.FC = () => {
+export default function TablesList() {
     const dispatch = useAppDispatch();
     const list = useSelector(selectFilteredTablesList);
     const company = useSelector(selectCompany);
@@ -35,11 +41,12 @@ const TablesList: React.FC = () => {
             return;
         }
         await window.navigator.clipboard.writeText(table);
-        setCopied(`${table} copied to clipboard`);
+        setCopied(table);
     }
 
     const onAddQuery = (table: string) => {
-        const sql = `SELECT * \nFROM ${table}`;
+        const sql = `SELECT *
+                     FROM ${table}`;
         if (currentQuery && currentQuery.sql === '') {
             dispatch(updateQuery({key: currentQuery.key, sql}));
             return;
@@ -48,14 +55,14 @@ const TablesList: React.FC = () => {
     }
 
     return (
-        <div className="db-tables-list-container">
+        <div>
             <TablePagination page={page} onChangePage={pageChangeHandler}
                              showFirst showLast
                              rowsPerPage={rowsPerPage}
                              className="table-list-pagination"
-                             bsSize="sm"
+                             size="sm"
                              count={list.length}/>
-            <table className="table table-xs mt-3 db-tables-list">
+            <TablesTable className="table table-xs mt-3">
                 <thead>
                 <tr>
                     <th><span className="bi-info-square"/></th>
@@ -69,21 +76,26 @@ const TablesList: React.FC = () => {
                     .map(table => (
                         <tr key={table}>
                             <td>
-                                <button className="text-info db-table-info"
+                                <button className="btn btn-link p-0 text-info"
+                                        style={{lineHeight: 'revert', fontSize: 'revert'}}
                                         onClick={() => onClickTableInfo(table)}>
-                                    <span className="bi-info-square"/>
+                                    <span className="bi-info-square-fill"/>
                                 </button>
                             </td>
                             <td className="font-monospace db-table" onClick={onClickTable(table)}>{table}</td>
-                            <td className="db-table" onClick={() => onAddQuery(table)}><span
-                                className="bi-database-gear"/></td>
+                            <td className="db-table" onClick={() => onAddQuery(table)}>
+                                <span className="bi-database-gear"/>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
-            </table>
-            <Snackbar open={!!copied} autoHideDuration={6000} onClose={snackbarClosedHandler} message={copied}/>
+            </TablesTable>
+            <ToastContainer className="position-fixed bottom-0 start-0 p-3">
+                <Toast show={!!copied} onClose={snackbarClosedHandler} autohide delay={5000} bg="info">
+                    <Toast.Header closeButton={false} className="text-center">{copied}</Toast.Header>
+                    <Toast.Body>Table name copied to clipboard.</Toast.Body>
+                </Toast>
+            </ToastContainer>
         </div>
     )
 }
-
-export default TablesList;
