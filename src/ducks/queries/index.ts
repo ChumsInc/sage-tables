@@ -26,7 +26,11 @@ const queriesSlice = createSlice({
     initialState: adapter.getInitialState(initialQueriesState),
     reducers: {
         addQuery: (state, action: PayloadAction<Query>) => {
-            adapter.addOne(state, action.payload);
+            if (selectors.selectById(state, action.payload.key)) {
+                adapter.updateOne(state, {id: action.payload.key, changes: action.payload});
+            } else {
+                adapter.addOne(state, action.payload);
+            }
         },
         closeQuery: (state, action: PayloadAction<string>) => {
             adapter.removeOne(state, action.payload);

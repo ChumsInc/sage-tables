@@ -16,17 +16,17 @@ export default function QueryEditor({queryKey}:QueryEditorProps) {
     const dispatch = useAppDispatch();
     const query = useAppSelector(selectCurrentQuery);
     const [sql, setSql] = useState<string>(query?.sql ?? '');
-    const [limit, setLimit] = useState<number>(query?.limit ?? 100);
-    const [offset, setOffset] = useState<number>(query?.offset ?? 0);
+    const [limit, setLimit] = useState<string>(query?.limit?.toString() ?? '100');
+    const [offset, setOffset] = useState<string>(query?.offset.toString() ?? '0');
 
     const queryChangeHandler = (field: keyof Pick<Query, 'company' | 'limit' | 'offset' | 'sql'>) =>
         (ev: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
             switch (field) {
                 case 'limit':
-                    setLimit(+ev.target.value);
+                    setLimit(ev.target.value);
                     return;
                 case 'offset':
-                    setOffset(+ev.target.value);
+                    setOffset(ev.target.value);
                     return;
                 case 'sql':
                     setSql(ev.target.value);
@@ -37,7 +37,7 @@ export default function QueryEditor({queryKey}:QueryEditorProps) {
         if (!query) {
             return
         }
-        await dispatch(executeQuery({...query, sql, limit, offset}));
+        await dispatch(executeQuery({...query, sql, limit: +limit, offset: +offset}));
     }
 
     const editorChangeHandler = async (sql?: string) => {
@@ -48,7 +48,7 @@ export default function QueryEditor({queryKey}:QueryEditorProps) {
         if (!query) {
             return;
         }
-        await dispatch(executeQuery({...query, sql, limit, offset}));
+        await dispatch(executeQuery({...query, sql, limit: +limit, offset: +offset}));
     }
 
     if (!query) {
@@ -66,8 +66,8 @@ export default function QueryEditor({queryKey}:QueryEditorProps) {
                         <div className="input-group-text">
                             Offset
                         </div>
-                        <input type="number" value={query?.offset ?? 0} onChange={queryChangeHandler('offset')}
-                               min={0} step={query?.limit ?? 0}
+                        <input type="number" value={offset} onChange={queryChangeHandler('offset')}
+                               min={0}
                                className="form-control form-control-sm"/>
                     </div>
                 </div>
@@ -76,7 +76,7 @@ export default function QueryEditor({queryKey}:QueryEditorProps) {
                         <div className="input-group-text">
                             Limit
                         </div>
-                        <input type="number" value={query?.limit ?? 100} onChange={queryChangeHandler('limit')}
+                        <input type="number" value={limit} onChange={queryChangeHandler('limit')}
                                className="form-control form-control-sm"/>
                     </div>
                 </div>

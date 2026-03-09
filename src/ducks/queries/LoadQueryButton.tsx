@@ -1,4 +1,4 @@
-import {useRef, useState} from "react";
+import {useCallback, useRef, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../app/configureStore";
 import type {SavedQuery} from "../../types";
 import {emptyQuery} from "../../utils";
@@ -18,6 +18,15 @@ const LoadQueryButton = ({queryKey, changed}: LoadQueryButtonProps) => {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [open, setOpen] = useState(false);
 
+    const setQuery = useCallback((arg:SavedQuery) => {
+        const query = {
+            ...emptyQuery(arg.company ?? 'CHI'),
+            key: queryKey,
+            ...arg,
+        };
+        dispatch(addQuery(query));
+    }, [queryKey])
+
     const fileChangeHandler = () => {
         setOpen(false);
         if (fileInputRef.current) {
@@ -33,12 +42,11 @@ const LoadQueryButton = ({queryKey, changed}: LoadQueryButtonProps) => {
                     if (!query || !query.sql) {
                         return;
                     }
-                    dispatch(addQuery({
-                        ...emptyQuery(query.company ?? 'CHI'),
-                        key: queryKey,
-                        sql: query.sql ?? '',
+                    setQuery({
+                        company: query.company ?? 'CHI',
+                        sql: query.sql,
                         filename: file.name,
-                    }));
+                    })
                 } catch (err: unknown) {
                     if (err instanceof Error) {
                         console.debug("fileChangeHandler()", err.message);
