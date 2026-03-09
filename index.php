@@ -22,3 +22,8 @@ $ui = new WebUI2([
 ]);
 $ui->addViteManifest()
     ->render();
+
+
+/**
+ * @TODO: Alert when query fails (including 401)
+ */
