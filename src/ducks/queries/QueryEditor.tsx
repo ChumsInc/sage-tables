@@ -1,4 +1,4 @@
-import {type ChangeEvent, useState} from 'react';
+import {type ChangeEvent, useCallback, useState} from 'react';
 import {executeQuery} from "./actions";
 import {useAppDispatch, useAppSelector} from "@/app/configureStore";
 import CompanySelect from "./CompanySelect";
@@ -8,16 +8,23 @@ import LoadQueryButton from "./LoadQueryButton";
 import SQLEditor from "./SQLEditor";
 import Button from "react-bootstrap/Button";
 import {selectCurrentQuery} from "@/ducks/queries/index.ts";
+import {selectCurrentSQL, updateSQL} from "@/ducks/queries/sqlSlice.ts";
 
 export interface QueryEditorProps {
     queryKey: string;
 }
-export default function QueryEditor({queryKey}:QueryEditorProps) {
+
+export default function QueryEditor({queryKey}: QueryEditorProps) {
     const dispatch = useAppDispatch();
     const query = useAppSelector(selectCurrentQuery);
-    const [sql, setSql] = useState<string>(query?.sql ?? '');
+    const sql = useAppSelector(selectCurrentSQL);
     const [limit, setLimit] = useState<string>(query?.limit?.toString() ?? '100');
     const [offset, setOffset] = useState<string>(query?.offset.toString() ?? '0');
+    const changed = query?.sql !== sql;
+
+    const editorChangeHandler = useCallback((sql?: string) => {
+        dispatch(updateSQL({key: queryKey, sql: sql ?? ''}))
+    }, [dispatch, queryKey])
 
     const queryChangeHandler = (field: keyof Pick<Query, 'company' | 'limit' | 'offset' | 'sql'>) =>
         (ev: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
@@ -28,8 +35,6 @@ export default function QueryEditor({queryKey}:QueryEditorProps) {
                 case 'offset':
                     setOffset(ev.target.value);
                     return;
-                case 'sql':
-                    setSql(ev.target.value);
             }
         }
 
@@ -38,10 +43,6 @@ export default function QueryEditor({queryKey}:QueryEditorProps) {
             return
         }
         await dispatch(executeQuery({...query, sql, limit: +limit, offset: +offset}));
-    }
-
-    const editorChangeHandler = async (sql?: string) => {
-        setSql(sql ?? '');
     }
 
     const editorSubmitHandler = async (sql: string) => {
@@ -88,14 +89,14 @@ export default function QueryEditor({queryKey}:QueryEditorProps) {
                     </Button>
                 </div>
                 <div className="col-auto">
-                    <SaveQueryButton changed={query.sql !== sql}/>
+                    <SaveQueryButton changed={changed}/>
                 </div>
                 <div className="col-auto">
-                    <LoadQueryButton queryKey={query.key} changed={query.sql !== sql}/>
+                    <LoadQueryButton queryKey={query.key} changed={changed}/>
                 </div>
                 <div className="col text-end">ID: {query.key}</div>
             </div>
-            <SQLEditor queryKey={query.key} sql={query?.sql ?? ''} onChange={editorChangeHandler}
+            <SQLEditor queryKey={query.key} sql={sql ?? ''} onChange={editorChangeHandler}
                        onExecute={editorSubmitHandler} readonly={query?.status === 'pending'}/>
         </div>
     )

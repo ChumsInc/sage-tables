@@ -5,10 +5,12 @@ import tabsReducer from "../ducks/tabs";
 import alertsReducer from "../ducks/alerts";
 import {type TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import queriesSlice from "../ducks/queries";
+import sqlSlice from "@/ducks/queries/sqlSlice.ts";
 
 const rootReducer = combineReducers({
     alerts: alertsReducer,
     [queriesSlice.reducerPath]: queriesSlice.reducer,
+    [sqlSlice.reducerPath]: sqlSlice.reducer,
     tables: tablesReducer,
     tabs: tabsReducer,
 })
