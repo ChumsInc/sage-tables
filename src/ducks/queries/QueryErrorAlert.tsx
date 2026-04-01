@@ -1,4 +1,4 @@
-import {useAppDispatch, useAppSelector} from "../../app/configureStore";
+import {useAppDispatch, useAppSelector} from "@/app/configureStore.ts";
 import Alert from "react-bootstrap/Alert";
 import {selectCurrentQueryError, dismissAlert} from "@/ducks/queries/queriesSlice.ts";
 

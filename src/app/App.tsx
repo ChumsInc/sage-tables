@@ -21,7 +21,7 @@ const App = () => {
             ...emptyQuery(company),
             key: getQueryKey(),
         }))
-    }, []);
+    }, [dispatch, company]);
 
     return (
         <ReactErrorBoundary FallbackComponent={ErrorFallback}>

@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {useAppDispatch, useAppSelector} from "../../app/configureStore";
+import {useAppDispatch, useAppSelector} from "@/app/configureStore.ts";
 import classNames from "classnames";
 import {saveQuery} from "./actions";
 import {Modal} from "react-bootstrap";

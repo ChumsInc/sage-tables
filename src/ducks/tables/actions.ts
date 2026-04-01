@@ -1,7 +1,7 @@
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
 import type {CompanyCode, ServerName, TableResponse} from "../../types";
-import type {RootState} from "../../app/configureStore";
-import {fetchTable, fetchTables} from "../../api/tables";
+import type {RootState} from "@/app/configureStore.ts";
+import {fetchTable, fetchTables} from "@/api/tables.ts";
 import {selectStatus} from "@/ducks/tables/tablesSlice.ts";
 
 export const setServer = createAction<ServerName>('list/setServer');

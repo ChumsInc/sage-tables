@@ -1,5 +1,5 @@
 import {useCallback, useRef, useState} from "react";
-import {useAppDispatch, useAppSelector} from "../../app/configureStore";
+import {useAppDispatch, useAppSelector} from "@/app/configureStore.ts";
 import type {SavedQuery} from "../../types";
 import {emptyQuery} from "../../utils";
 import {Modal} from "react-bootstrap";
