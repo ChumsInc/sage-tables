@@ -1,6 +1,6 @@
 import {DataTableProvider, type SortableTableField} from "@chumsinc/sortable-tables";
 import {useAppSelector} from "@/app/configureStore.ts";
-import {selectCurrentQuery, selectCurrentQueryFields, selectCurrentQuerySort} from "@/ducks/queries/index.ts";
+import {selectCurrentQuery, selectCurrentQueryFields, selectCurrentQuerySort} from "@/ducks/queries/queriesSlice.ts";
 import type {DataRow, QueryField} from "@/src/types.ts";
 import classNames from "classnames";
 import QueryResultTable from "@/ducks/queries/QueryResultTable.tsx";
@@ -50,7 +50,7 @@ function tableField(field: QueryField): SortableTableField<DataRow> {
         className: (row) => classNames({
             'text-wrap': field.FieldType === 'LONGVARCHAR',
             'text-secondary': row[field.Name] === null,
-            'text-center': row[field.Name] === null,
+            // 'text-center': row[field.Name] === null,
             'text-decimal': field.FieldType === 'DECIMAL',
             'text-date': field.FieldType === 'DATE',
             'text-varchar': field.FieldType === 'VARCHAR' || field.FieldType === 'LONGVARCHAR',

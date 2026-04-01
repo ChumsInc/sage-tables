@@ -2,7 +2,7 @@ import type {TabList} from "../../types";
 import {createReducer} from "@reduxjs/toolkit";
 import {loadTable} from "../tables/actions";
 import {addTab, closeTab, setTab} from "./actions";
-import {addQuery} from "@/ducks/queries";
+import {addQuery} from "@/ducks/queries/queriesSlice.ts";
 
 export interface TabsState {
     list: TabList;

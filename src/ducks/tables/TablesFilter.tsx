@@ -1,25 +1,29 @@
 import {type ChangeEvent, useEffect} from 'react';
 import {useSelector} from "react-redux";
-import {useAppDispatch} from "../../app/configureStore";
-import {loadTables, setCompany, setFilter, setServer} from "./actions";
-import {selectCompany, selectFilter, selectLoading, selectServer,} from './selectors'
+import {useAppDispatch} from "@/app/configureStore.ts";
+import {loadTables} from "./actions";
 import type {CompanyCode, ServerName} from "../../types";
 import {ProgressBar} from "react-bootstrap";
+import {
+    selectCompany,
+    selectFilter,
+    selectStatus,
+    selectServer,
+    setCompany,
+    setFilter,
+    setServer
+} from "@/ducks/tables/tablesSlice.ts";
 
 const TablesFilter = () => {
     const dispatch = useAppDispatch();
     const server = useSelector(selectServer);
     const company = useSelector(selectCompany);
     const filter = useSelector(selectFilter);
-    const loading = useSelector(selectLoading);
-
-    useEffect(() => {
-        dispatch(loadTables());
-    }, []);
+    const status = useSelector(selectStatus);
 
     useEffect(() => {
         dispatch(loadTables())
-    }, [server, company])
+    }, [dispatch, company, server])
 
     const handleServerChange = (ev: ChangeEvent<HTMLSelectElement>) => {
         dispatch(setServer(ev.target.value as ServerName));
@@ -52,7 +56,7 @@ const TablesFilter = () => {
                 </select>
                 <button type="button" className="btn btn-sm btn-primary" onClick={onReload}>Reload</button>
             </div>
-            {loading && <ProgressBar now={100} animated className="mt-1" label="Loading..."/>}
+            {status === 'pending' && <ProgressBar now={100} animated className="mt-1" label="Loading..."/>}
             <div className="mt-1">
                 <div className="input-group input-group-sm">
                     <div className="input-group-text"><span className="bi-funnel-fill"/></div>

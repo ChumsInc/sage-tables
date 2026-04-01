@@ -7,7 +7,7 @@ import SaveQueryButton from "./SaveQueryButton";
 import LoadQueryButton from "./LoadQueryButton";
 import SQLEditor from "./SQLEditor";
 import Button from "react-bootstrap/Button";
-import {selectCurrentQuery} from "@/ducks/queries/index.ts";
+import {selectCurrentQuery} from "@/ducks/queries/queriesSlice.ts";
 import {selectCurrentSQL, updateSQL} from "@/ducks/queries/sqlSlice.ts";
 
 export interface QueryEditorProps {
@@ -22,9 +22,21 @@ export default function QueryEditor({queryKey}: QueryEditorProps) {
     const [offset, setOffset] = useState<string>(query?.offset.toString() ?? '0');
     const changed = query?.sql !== sql;
 
+    const submitQuery = useCallback((sql: string) => {
+        if (!query || !sql) {
+            return;
+        }
+        dispatch(executeQuery({...query, sql, limit: +limit, offset: +offset}));
+    }, [query, limit, offset, dispatch])
+
     const editorChangeHandler = useCallback((sql?: string) => {
         dispatch(updateSQL({key: queryKey, sql: sql ?? ''}))
     }, [dispatch, queryKey])
+
+    const editorSubmitHandler = useCallback((sql: string) => {
+        console.debug('editorSubmitHandler()', sql, queryKey);
+        submitQuery(sql ?? '');
+    }, [queryKey, submitQuery])
 
     const queryChangeHandler = (field: keyof Pick<Query, 'company' | 'limit' | 'offset' | 'sql'>) =>
         (ev: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
@@ -38,19 +50,10 @@ export default function QueryEditor({queryKey}: QueryEditorProps) {
             }
         }
 
-    const submitHandler = async () => {
-        if (!query) {
-            return
-        }
-        await dispatch(executeQuery({...query, sql, limit: +limit, offset: +offset}));
+    const submitHandler = () => {
+        submitQuery(sql ?? '');
     }
 
-    const editorSubmitHandler = async (sql: string) => {
-        if (!query) {
-            return;
-        }
-        await dispatch(executeQuery({...query, sql, limit: +limit, offset: +offset}));
-    }
 
     if (!query) {
         return null;

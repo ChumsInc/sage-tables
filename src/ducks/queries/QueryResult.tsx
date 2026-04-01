@@ -1,30 +1,14 @@
-import {useAppDispatch, useAppSelector} from "../../app/configureStore";
+import {useAppSelector} from "@/app/configureStore.ts";
 import QueryDuration from "./QueryDuration";
-import {TablePagination} from "@chumsinc/sortable-tables";
-import {
-    selectCurrentQueryDataLength,
-    selectCurrentQueryDuration,
-    selectCurrentQueryPaginationProps,
-    updateQuery
-} from "@/ducks/queries/index.ts";
+import {selectCurrentQueryDataLength, selectCurrentQueryDuration} from "@/ducks/queries/queriesSlice.ts";
 import DownloadDataButton from "@/ducks/queries/DownloadDataButton.tsx";
 import {Col, Row} from "react-bootstrap";
 import QueryResultContext from "@/ducks/queries/QueryResultContext.tsx";
 
 
 export default function QueryResult({queryKey}: { queryKey: string }) {
-    const dispatch = useAppDispatch();
     const dataLength = useAppSelector(selectCurrentQueryDataLength);
-    const paginationProps = useAppSelector(selectCurrentQueryPaginationProps);
     const duration = useAppSelector(selectCurrentQueryDuration);
-
-    const pageChangeHandler = (page: number) => {
-        dispatch(updateQuery({key: queryKey, page}));
-    }
-
-    const rowsPerPageChangeHandler = (rowsPerPage: number) => {
-        dispatch(updateQuery({key: queryKey, rowsPerPage}));
-    }
 
     return (
         <div className="query-results-container" key={queryKey}>
@@ -33,17 +17,14 @@ export default function QueryResult({queryKey}: { queryKey: string }) {
                     Duration: <QueryDuration duration={duration}/>
                 </Col>
                 <Col xs="auto">
+                    Rows: {dataLength}
+                </Col>
+                <Col/>
+                <Col xs="auto">
                     <DownloadDataButton queryKey={queryKey} format="tsv"/>
                 </Col>
                 <Col xs="auto">
                     <DownloadDataButton queryKey={queryKey} format="json"/>
-                </Col>
-                <Col className="justify-content-end">
-                    <TablePagination page={paginationProps.page} onChangePage={pageChangeHandler} size="sm"
-                                     rowsPerPage={paginationProps.rowsPerPage}
-                                     rowsPerPageProps={{onChange: rowsPerPageChangeHandler}}
-                                     showFirst showLast
-                                     count={dataLength}/>
                 </Col>
             </Row>
             <QueryResultContext/>

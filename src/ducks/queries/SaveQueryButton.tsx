@@ -4,7 +4,7 @@ import classNames from "classnames";
 import {saveQuery} from "./actions";
 import {Modal} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
-import {selectCurrentQuery} from "@/ducks/queries/index.ts";
+import {selectCurrentQuery} from "@/ducks/queries/queriesSlice.ts";
 
 export interface SavedQueryButtonProps {
     changed?: boolean;

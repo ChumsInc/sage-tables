@@ -5,7 +5,8 @@ import {emptyQuery} from "../../utils";
 import {Modal} from "react-bootstrap";
 import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
-import {addQuery, selectCurrentQuery} from "@/ducks/queries/index.ts";
+import {selectCurrentQuery} from "@/ducks/queries/queriesSlice.ts";
+import {loadQuery} from "@/ducks/queries/actions.ts";
 
 export interface LoadQueryButtonProps {
     queryKey: string;
@@ -17,18 +18,19 @@ const LoadQueryButton = ({queryKey, changed}: LoadQueryButtonProps) => {
     const query = useAppSelector(selectCurrentQuery);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [open, setOpen] = useState(false);
+    const [alert, setAlert] = useState<string | null>(null);
+    const [filename, setFilename] = useState<string | null>(null);
 
-    const setQuery = useCallback((arg:SavedQuery) => {
+    const setQuery = useCallback((arg: SavedQuery) => {
         const query = {
             ...emptyQuery(arg.company ?? 'CHI'),
             key: queryKey,
             ...arg,
         };
-        dispatch(addQuery(query));
-    }, [queryKey])
+        dispatch(loadQuery(query));
+    }, [queryKey, dispatch])
 
     const fileChangeHandler = () => {
-        setOpen(false);
         if (fileInputRef.current) {
             const [file] = fileInputRef.current.files ?? [];
             if (!file) {
@@ -37,11 +39,14 @@ const LoadQueryButton = ({queryKey, changed}: LoadQueryButtonProps) => {
             const reader = new FileReader();
             reader.addEventListener("loadend", () => {
                 try {
+                    setFilename(file.name);
                     const text = reader.result as string;
                     const query = JSON.parse(text) as Partial<SavedQuery>;
                     if (!query || !query.sql) {
+                        setAlert(`Error: No SQL in file. Expected JSON with "sql" property.`);
                         return;
                     }
+                    setOpen(false);
                     setQuery({
                         company: query.company ?? 'CHI',
                         sql: query.sql,
@@ -50,6 +55,7 @@ const LoadQueryButton = ({queryKey, changed}: LoadQueryButtonProps) => {
                 } catch (err: unknown) {
                     if (err instanceof Error) {
                         console.debug("fileChangeHandler()", err.message);
+                        setAlert(err.message);
                         return Promise.reject(err);
                     }
                     console.debug("fileChangeHandler()", err);
@@ -60,7 +66,11 @@ const LoadQueryButton = ({queryKey, changed}: LoadQueryButtonProps) => {
         }
     }
 
-    const closeHandler = () => setOpen(false);
+    const closeHandler = () => {
+        setOpen(false);
+        setAlert(null);
+        setFilename(null);
+    }
 
     if (!query) {
         return;
@@ -84,8 +94,14 @@ const LoadQueryButton = ({queryKey, changed}: LoadQueryButtonProps) => {
                     <div>
                         <input type="file" className="form-control form-control-sm" accept="application/json"
                                value=""
-                               onChange={fileChangeHandler} ref={fileInputRef}/>/
+                               onChange={fileChangeHandler} ref={fileInputRef}/>
                     </div>
+                    {!!alert && (
+                        <Alert variant="warning" className="mt-3">
+                            <strong className="me-3">{filename}</strong>
+                            {alert}
+                        </Alert>
+                    )}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="outline-secondary" onClick={closeHandler}>Cancel</Button>

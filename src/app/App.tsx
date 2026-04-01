@@ -5,10 +5,10 @@ import TabContent from "../ducks/tabs/TabContent";
 import {useAppDispatch} from "./configureStore";
 import {emptyQuery, getQueryKey} from "../utils";
 import {useSelector} from "react-redux";
-import {selectCompany} from "../ducks/tables/selectors";
+import {selectCompany} from "../ducks/tables/tablesSlice";
 import {ErrorBoundary as ReactErrorBoundary} from 'react-error-boundary';
 import ErrorFallback from "./ErrorFallback";
-import {addQuery} from "@/ducks/queries";
+import {addQuery} from "@/ducks/queries/queriesSlice.ts";
 
 
 const App = () => {

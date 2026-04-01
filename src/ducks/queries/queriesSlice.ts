@@ -1,6 +1,6 @@
 import type {ActionStatus, Query, QueryChangeProps} from "../../types";
 import {createEntityAdapter, createSelector, createSlice, type PayloadAction} from "@reduxjs/toolkit";
-import {executeQuery} from "./actions";
+import {executeQuery, loadQuery} from "./actions";
 import {selectCurrentTab} from "@/ducks/tabs/selectors.ts";
 import {defaultSort} from "@/src/utils.ts";
 import {dataSorter} from "@/ducks/queries/utils.ts";
@@ -26,17 +26,16 @@ const queriesSlice = createSlice({
     initialState: adapter.getInitialState(initialQueriesState),
     reducers: {
         addQuery: (state, action: PayloadAction<Query>) => {
-            if (selectors.selectById(state, action.payload.key)) {
-                adapter.updateOne(state, {id: action.payload.key, changes: action.payload});
-            } else {
-                adapter.addOne(state, action.payload);
-            }
+            adapter.upsertOne(state, action.payload);
         },
         closeQuery: (state, action: PayloadAction<string>) => {
             adapter.removeOne(state, action.payload);
         },
         updateQuery: (state, action: PayloadAction<QueryChangeProps>) => {
             adapter.updateOne(state, {id: action.payload.key, changes: action.payload});
+        },
+        dismissAlert: (state) => {
+            state.status = 'idle';
         }
     },
     extraReducers: (builder) => {
@@ -80,6 +79,9 @@ const queriesSlice = createSlice({
             .addCase(closeTab, (state, action) => {
                 adapter.removeOne(state, action.payload);
             })
+            .addCase(loadQuery.fulfilled, (state, action) => {
+                adapter.upsertOne(state, action.payload);
+            })
     },
     selectors: {
         selectQueryList: (state) => selectors.selectAll(state),
@@ -87,7 +89,7 @@ const queriesSlice = createSlice({
     }
 })
 export default queriesSlice;
-export const {closeQuery, updateQuery, addQuery} = queriesSlice.actions;
+export const {closeQuery, updateQuery, addQuery, dismissAlert} = queriesSlice.actions;
 export const {selectQueryList, selectQueryStatus} = queriesSlice.selectors;
 
 export const selectCurrentQuery = createSelector(
@@ -118,6 +120,15 @@ export const selectCurrentQueryPagedData = createSelector(
 
         return [...data].sort(dataSorter(sort))
             .slice(page * rowPerPage, (page + 1) * rowPerPage);
+    }
+)
+
+export const selectCurrentQuerySortedData = createSelector(
+    [selectCurrentQuery],
+    (query) => {
+        const data = query?.response?.Data ?? [];
+        const sort = query?.sort ?? defaultSort;
+        return [...data].sort(dataSorter(sort));
     }
 )
 
@@ -157,7 +168,7 @@ export const selectCurrentQuerySort = createSelector(
 
 export const selectCurrentQueryError = createSelector(
     [selectCurrentQuery],
-    (query) => query?.response?.Error ?? null
+    (query) => query?.error ?? query?.response?.Error ?? null
 )
 
 export const selectCurrentQueryPaginationProps = createSelector(

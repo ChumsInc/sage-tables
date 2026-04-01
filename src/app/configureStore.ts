@@ -1,17 +1,17 @@
 import {configureStore} from '@reduxjs/toolkit'
 import {combineReducers} from "redux";
-import tablesReducer from "../ducks/tables";
+import tablesSlice from "@/ducks/tables/tablesSlice.ts";
 import tabsReducer from "../ducks/tabs";
 import alertsReducer from "../ducks/alerts";
 import {type TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
-import queriesSlice from "../ducks/queries";
+import queriesSlice from "@/ducks/queries/queriesSlice.ts";
 import sqlSlice from "@/ducks/queries/sqlSlice.ts";
 
 const rootReducer = combineReducers({
     alerts: alertsReducer,
     [queriesSlice.reducerPath]: queriesSlice.reducer,
     [sqlSlice.reducerPath]: sqlSlice.reducer,
-    tables: tablesReducer,
+    [tablesSlice.reducerPath]: tablesSlice.reducer,
     tabs: tabsReducer,
 })
 

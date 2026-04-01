@@ -1,9 +1,9 @@
 import type {MouseEvent} from 'react';
-import {useAppDispatch} from "../../app/configureStore";
+import {useAppDispatch} from "@/app/configureStore.ts";
 import {useSelector} from "react-redux";
 import {selectCurrentTab, selectTabs} from "./selectors";
-import {addQuery} from "../queries";
-import {selectCompany} from "../tables/selectors";
+import {addQuery} from "../queries/queriesSlice.ts";
+import {selectCompany} from "../tables/tablesSlice";
 import {emptyQuery, getQueryKey} from "../../utils";
 import {closeTab, setTab} from "./actions";
 import dayjs from "dayjs";

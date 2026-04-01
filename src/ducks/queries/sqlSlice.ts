@@ -1,8 +1,9 @@
 import type {Query} from "@/src/types.ts";
 import {createEntityAdapter, createSelector, createSlice, type PayloadAction} from "@reduxjs/toolkit";
-import {executeQuery} from "@/ducks/queries/actions.ts";
+import {executeQuery, loadQuery} from "@/ducks/queries/actions.ts";
 import {addTab, closeTab} from "@/ducks/tabs/actions.ts";
 import {selectCurrentTab} from "@/ducks/tabs/selectors.ts";
+import {addQuery, updateQuery} from "@/ducks/queries/queriesSlice.ts";
 
 export type QuerySQL = Pick<Query, 'key'|'sql'>;
 
@@ -35,6 +36,21 @@ const sqlSlice = createSlice({
             })
             .addCase(closeTab, (state, action) => {
                 adapter.removeOne(state, action.payload);
+            })
+            .addCase(addQuery, (state, action) => {
+                const key = action.payload.key;
+                const sql = action.payload.sql;
+                adapter.addOne(state, {key, sql})
+            })
+            .addCase(updateQuery, (state, action) => {
+                const key = action.payload.key;
+                const sql = action.payload.sql ?? '';
+                adapter.upsertOne(state, {key, sql})
+            })
+            .addCase(loadQuery.fulfilled, (state, action) => {
+                const key = action.payload.key;
+                const sql = action.payload.sql;
+                adapter.upsertOne(state, {key, sql})
             })
     },
     selectors: {

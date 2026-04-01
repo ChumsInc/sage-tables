@@ -3,7 +3,8 @@ import type {Query, QueryResponse, SavedQuery} from "../../types";
 import {execQuery} from "@/api/query";
 import type {RootState} from "@/app/configureStore";
 import {saveAs} from "file-saver";
-import {selectQueryStatus} from "@/ducks/queries/index.ts";
+import {selectQueryStatus} from "@/ducks/queries/queriesSlice.ts";
+import {emptyQuery} from "@/src/utils.ts";
 
 export const executeQuery = createAsyncThunk<QueryResponse | null, Query, { state: RootState }>(
     'queries/execute',
@@ -35,3 +36,11 @@ export const saveQuery = createAsyncThunk<void, Query>(
     }
 )
 
+export const loadQuery = createAsyncThunk<Query, SavedQuery>('queries/loadQuery',
+    async (arg) => {
+        return {
+            ...emptyQuery(arg.company ?? 'CHI'),
+            ...arg,
+        };
+    }
+);

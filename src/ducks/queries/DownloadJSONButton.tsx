@@ -1,6 +1,6 @@
 import {saveAs} from "file-saver";
 import {useAppSelector} from "@/app/configureStore.ts";
-import {selectCurrentQueryData} from "@/ducks/queries/index.ts";
+import {selectCurrentQueryData} from "@/ducks/queries/queriesSlice.ts";
 import {useCallback} from "react";
 
 export interface DownloadJSONButtonProps {

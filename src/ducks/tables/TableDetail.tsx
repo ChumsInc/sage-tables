@@ -1,5 +1,5 @@
-import {useAppSelector} from "../../app/configureStore";
-import {selectServer, selectTable} from "./selectors";
+import {useAppSelector} from "@/app/configureStore.ts";
+import {selectServer, selectTable} from "./tablesSlice";
 import TableColumns from "./TableColumns";
 import TableIndexes from "./TableIndexes";
 import TableFields from "./TableFields";

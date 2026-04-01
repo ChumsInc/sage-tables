@@ -31,12 +31,12 @@ export default defineConfig({
         sourcemap: true,
         rollupOptions: {
             output: {
-                manualChunks(id) {
-                    if (id.includes('node_modules')) {
-                        return 'vendor'
-                    }
-                    return null;
-                }
+                codeSplitting: {
+                    groups: [
+                        {name: 'vendor-react', test: /node_modules\/(react|react-dom)\//, priority: 10},
+                        {name: 'vendor', test: /node_modules/, priority: 5}
+                    ]
+                },
             }
         }
     },
