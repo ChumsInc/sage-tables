@@ -43,7 +43,7 @@ export default function TablesList() {
     const onAddQuery = (table: string) => {
         const sql = `SELECT * FROM ${table}`;
         if (currentQuery && currentQuery.sql === '') {
-            dispatch(updateQuery({key: currentQuery.key, sql}));
+            dispatch(updateQuery({key: currentQuery.key, changes: {sql}}));
             return;
         }
         dispatch(addQuery({...emptyQuery(company), key: getQueryKey(), sql}))

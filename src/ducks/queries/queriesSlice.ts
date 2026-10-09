@@ -32,7 +32,7 @@ const queriesSlice = createSlice({
             adapter.removeOne(state, action.payload);
         },
         updateQuery: (state, action: PayloadAction<QueryChangeProps>) => {
-            adapter.updateOne(state, {id: action.payload.key, changes: action.payload});
+            adapter.updateOne(state, {id: action.payload.key, changes: action.payload.changes});
         },
         dismissAlert: (state) => {
             state.status = 'idle';
@@ -145,7 +145,7 @@ export const selectCurrentQueryFields = createSelector(
     }
 )
 
-export const selectCurrentQueryDuration  = createSelector(
+export const selectCurrentQueryDuration = createSelector(
     [selectCurrentQuery],
     (query) => {
         return query?.response?.timings?.duration ?? 0;

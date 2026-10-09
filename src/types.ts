@@ -21,7 +21,10 @@ export interface Query {
     error?: string | null;
 }
 
-export type QueryChangeProps = Partial<Query> & Pick<Query, 'key'>;
+export interface QueryChangeProps {
+    key: string;
+    changes: Partial<Query>
+}
 export type QueryPageProps = Pick<Query, 'key' | 'page'>;
 export type QueryRowsPerPageProps = Pick<Query, 'key' | 'rowsPerPage'>;
 

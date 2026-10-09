@@ -23,7 +23,7 @@ const store = configureStore({
         }
     }),
     devTools: {
-        name: 'Chums - Sage Tables'
+        name: 'Chums - Sage Tables (Dev)'
     }
 });
 

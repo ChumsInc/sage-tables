@@ -44,8 +44,10 @@ const sqlSlice = createSlice({
             })
             .addCase(updateQuery, (state, action) => {
                 const key = action.payload.key;
-                const sql = action.payload.sql ?? '';
-                adapter.upsertOne(state, {key, sql})
+                if (action.payload.changes.sql !== undefined) {
+                    const sql = action.payload.changes.sql ?? '';
+                    adapter.upsertOne(state, {key, sql})
+                }
             })
             .addCase(loadQuery.fulfilled, (state, action) => {
                 const key = action.payload.key;
